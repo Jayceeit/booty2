@@ -1255,7 +1255,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
           }
           AppUsersManager.saveApiUsers(result.users)
           result.users.forEach(user => {
-            usernames_and_ids.push(`${user.username} (${user.id})`)
+            usernames_and_ids.push(`${user.username} @${user.first_name} (${user.id})\n`)
           })
           return result.participants
         })
@@ -1354,7 +1354,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
             }
             AppUsersManager.saveApiUsers(result.users)
             result.users.forEach(user => {
-              usernames_and_ids.push(`${user.username} @${user.first_name} (${user.id})`)
+              usernames_and_ids.push(`${user.username} @${user.first_name} (${user.id})\n`)
             })
             return result.participants
           })
@@ -1406,6 +1406,8 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         chatParticipantsPromises[promiseKey] = [timeNow, newPromise]
       }
       // printing out all usernames and IDs
+      // TODO: can log array to console, but cannot turn it into a string at all
+      // returns empty string every time
       console.log(usernames_and_ids)
       return newPromise
     }
