@@ -1213,8 +1213,9 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
 
     function getChannelParticipants (id, filter, limit, offset) {
       filter = filter || {_: 'channelParticipantsRecent'}
-      limit = limit || 200
       offset = offset || 0
+      limit = limit || 200
+    
       var promiseKey = [id, filter._, offset, limit].join('_')
       var promiseData = chatParticipantsPromises[promiseKey]
 
@@ -1228,6 +1229,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
           return $q.reject()
         }
       }
+
 
       var fetchParticipants = function (cachedParticipants) {
         var hash = 0
@@ -1252,9 +1254,15 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
             return cachedParticipants
           }
           AppUsersManager.saveApiUsers(result.users)
+          var participantids = []
+          console.log(participantids)
+          result.users.forEach(parti => participantids.push(`Username : ${parti.username}, ID : ${parti.id}, Phone: ${parti.phone}`))
           return result.participants
-        })
-      }
+      })
+    }
+
+      
+    
 
       var maybeAddSelf = function (participants) {
         var chat = AppChatsManager.getChat(id)
@@ -1300,8 +1308,107 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
 
       var newPromise = fetchParticipants().then(maybeAddSelf)
       chatParticipantsPromises[promiseKey] = [timeNow, newPromise]
-      return newPromise
-    }
+     
+      
+      //ROUND 2
+
+      //var boolean = true
+
+      while (offset < 10000) {
+        offset = offset + 200
+        
+        promiseKey = [id, filter._, offset, limit].join('_')
+        promiseData = chatParticipantsPromises[promiseKey]
+
+        if (filter._ == 'channelParticipantsRecent') {
+          chat = AppChatsManager.getChat(id)
+          if (chat &&
+              chat.pFlags && (
+                chat.pFlags.kicked ||
+                chat.pFlags.broadcast && !chat.pFlags.creator && !chat.admin_rights
+              )) {
+            return $q.reject()
+          }
+        }
+
+
+        fetchParticipants = function (cachedParticipants) {
+          var hash = 0
+          if (cachedParticipants) {
+            userIDs = []
+            angular.forEach(cachedParticipants, function (participant) {
+              userIDs.push(participant.user_id)
+            })
+            userIDs.sort()
+            angular.forEach(userIDs, function (userID) {
+              hash = ((hash * 20261) + 0x80000000 + userID) % 0x80000000
+            })
+          }
+          return MtpApiManager.invokeApi('channels.getParticipants', {
+            channel: AppChatsManager.getChannelInput(id),
+            filter: filter,
+            offset: offset,
+            limit: limit,
+            hash: hash
+          }).then(function (result) {
+            if (result._ == 'channels.channelParticipantsNotModified') {
+              return cachedParticipants
+            }
+            AppUsersManager.saveApiUsers(result.users)
+            var participantids = []
+            console.log(participantids)
+            result.users.forEach(parti => participantids.push(`Username : ${parti.username}, ID : ${parti.id}, Phone: ${parti.phone}`))
+            return result.participants
+        })
+      }
+
+        maybeAddSelf = function (participants) {
+          chat = AppChatsManager.getChat(id)
+          var selfMustBeFirst = filter._ == 'channelParticipantsRecent' &&
+                                !offset &&
+                                !chat.pFlags.kicked &&
+                                !chat.pFlags.left
+
+          if (selfMustBeFirst) {
+            participants = angular.copy(participants)
+            myID = AppUsersManager.getSelf().id
+            myIndex = false
+            myParticipant
+            for (var i = 0, len = participants.length; i < len; i++) {
+              if (participants[i].user_id == myID) {
+                myIndex = i
+                break
+              }
+            }
+            if (myIndex !== false) {
+              myParticipant = participants[i]
+              participants.splice(i, 1)
+            } else {
+              myParticipant = {_: 'channelParticipantSelf', user_id: myID}
+            }
+            participants.unshift(myParticipant)
+          }
+          return participants
+        }
+
+        timeNow = tsNow()
+        if (promiseData !== undefined) {
+          promise = promiseData[1]
+          if (promiseData[0] > timeNow - 60000) {
+            return promise
+          }
+          newPromise = promise.then(function (cachedParticipants) {
+            return fetchParticipants(cachedParticipants).then(maybeAddSelf)
+          })
+          chatParticipantsPromises[promiseKey] = [timeNow, newPromise]
+          return newPromise
+        }
+
+        newPromise = fetchParticipants().then(maybeAddSelf)
+        chatParticipantsPromises[promiseKey] = [timeNow, newPromise]
+  }
+  return newPromise
+}
 
     function getChannelFull (id, force) {
       if (chatsFull[id] !== undefined && !force) {
@@ -1351,6 +1458,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         return $q.reject(error)
       })
     }
+  
 
     function invalidateChannelParticipants(id) {
       delete chatsFull[id]
@@ -4903,6 +5011,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
 
       $(document).on('click', function (event) {
         var target = event.target
+
         if (target &&
           target.tagName == 'A' &&
           !target.onclick &&
