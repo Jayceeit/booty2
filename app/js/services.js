@@ -25,7 +25,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       myID = id
     })
 
-    function fillContacts () {
+    function fillContacts() {
       if (contactsFillPromise) {
         return contactsFillPromise
       }
@@ -47,7 +47,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function getUserSearchText (id) {
+    function getUserSearchText(id) {
       var user = users[id]
       if (!user) {
         return false
@@ -58,13 +58,13 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
 
       return (user.first_name || '') +
-              ' ' + (user.last_name || '') +
-              ' ' + (user.phone || '') +
-              ' ' + (user.username || '') +
-              ' ' + serviceText
+        ' ' + (user.last_name || '') +
+        ' ' + (user.phone || '') +
+        ' ' + (user.username || '') +
+        ' ' + serviceText
     }
 
-    function getContacts (query) {
+    function getContacts(query) {
       return fillContacts().then(function (contactsList) {
         if (angular.isString(query) && query.length) {
           var results = SearchIndexManager.search(query, contactsIndex)
@@ -91,15 +91,15 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function resolveUsername (username) {
+    function resolveUsername(username) {
       return usernames[username] || 0
     }
 
-    function saveApiUsers (apiUsers) {
+    function saveApiUsers(apiUsers) {
       angular.forEach(apiUsers, saveApiUser)
     }
 
-    function saveApiUser (apiUser, noReplace) {
+    function saveApiUser(apiUser, noReplace) {
       if (!angular.isObject(apiUser) ||
         noReplace && angular.isObject(users[apiUser.id]) && users[apiUser.id].first_name) {
         return
@@ -125,11 +125,11 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       apiUser.num = (Math.abs(userID) % 8) + 1
 
       if (apiUser.first_name) {
-        apiUser.rFirstName = RichTextProcessor.wrapRichText(apiUser.first_name, {noLinks: true, noLinebreaks: true})
-        apiUser.rFullName = apiUser.last_name ? RichTextProcessor.wrapRichText(apiUser.first_name + ' ' + (apiUser.last_name || ''), {noLinks: true, noLinebreaks: true}) : apiUser.rFirstName
+        apiUser.rFirstName = RichTextProcessor.wrapRichText(apiUser.first_name, { noLinks: true, noLinebreaks: true })
+        apiUser.rFullName = apiUser.last_name ? RichTextProcessor.wrapRichText(apiUser.first_name + ' ' + (apiUser.last_name || ''), { noLinks: true, noLinebreaks: true }) : apiUser.rFirstName
       } else {
-        apiUser.rFirstName = RichTextProcessor.wrapRichText(apiUser.last_name, {noLinks: true, noLinebreaks: true}) || apiUser.rPhone || _('user_first_name_deleted')
-        apiUser.rFullName = RichTextProcessor.wrapRichText(apiUser.last_name, {noLinks: true, noLinebreaks: true}) || apiUser.rPhone || _('user_name_deleted')
+        apiUser.rFirstName = RichTextProcessor.wrapRichText(apiUser.last_name, { noLinks: true, noLinebreaks: true }) || apiUser.rPhone || _('user_first_name_deleted')
+        apiUser.rFullName = RichTextProcessor.wrapRichText(apiUser.last_name, { noLinks: true, noLinebreaks: true }) || apiUser.rPhone || _('user_name_deleted')
       }
 
       if (apiUser.username) {
@@ -167,15 +167,15 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       $rootScope.$broadcast('user_update', userID)
 
       if (cachedPhotoLocations[userID] !== undefined) {
-        safeReplaceObject(cachedPhotoLocations[userID], apiUser && apiUser.photo && apiUser.photo.photo_small || {empty: true})
+        safeReplaceObject(cachedPhotoLocations[userID], apiUser && apiUser.photo && apiUser.photo.photo_small || { empty: true })
       }
     }
 
-    function saveUserAccess (id, accessHash) {
+    function saveUserAccess(id, accessHash) {
       userAccess[id] = accessHash
     }
 
-    function getUserStatusForSort (status) {
+    function getUserStatusForSort(status) {
       if (status) {
         var expires = status.expires || status.was_online
         if (expires) {
@@ -195,27 +195,27 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return 0
     }
 
-    function getUser (id) {
+    function getUser(id) {
       if (angular.isObject(id)) {
         return id
       }
-      return users[id] || {id: id, deleted: true, num: 1, access_hash: userAccess[id]}
+      return users[id] || { id: id, deleted: true, num: 1, access_hash: userAccess[id] }
     }
 
-    function getSelf () {
+    function getSelf() {
       return getUser(myID)
     }
 
-    function isBot (id) {
+    function isBot(id) {
       return users[id] && users[id].pFlags.bot
     }
 
-    function hasUser (id, allowMin) {
+    function hasUser(id, allowMin) {
       var user = users[id]
       return angular.isObject(user) && (allowMin || !user.pFlags.min)
     }
 
-    function getUserPhoto (id) {
+    function getUserPhoto(id) {
       var user = getUser(id)
 
       if (id == 333000) {
@@ -225,7 +225,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
 
       if (cachedPhotoLocations[id] === undefined) {
-        cachedPhotoLocations[id] = user && user.photo && user.photo.photo_small || {empty: true}
+        cachedPhotoLocations[id] = user && user.photo && user.photo.photo_small || { empty: true }
       }
 
       return {
@@ -235,15 +235,15 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
     }
 
-    function getUserString (id) {
+    function getUserString(id) {
       var user = getUser(id)
       return 'u' + id + (user.access_hash ? '_' + user.access_hash : '')
     }
 
-    function getUserInput (id) {
+    function getUserInput(id) {
       var user = getUser(id)
       if (user.pFlags.self) {
-        return {_: 'inputUserSelf'}
+        return { _: 'inputUserSelf' }
       }
       return {
         _: 'inputUser',
@@ -252,21 +252,21 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
     }
 
-    function updateUsersStatuses () {
+    function updateUsersStatuses() {
       var timestampNow = tsNow(true)
       angular.forEach(users, function (user) {
         if (user.status &&
           user.status._ == 'userStatusOnline' &&
           user.status.expires < timestampNow) {
           user.status = user.status.wasStatus ||
-          {_: 'userStatusOffline', was_online: user.status.expires}
+            { _: 'userStatusOffline', was_online: user.status.expires }
           delete user.status.wasStatus
           $rootScope.$broadcast('user_update', user.id)
         }
       })
     }
 
-    function forceUserOnline (id) {
+    function forceUserOnline(id) {
       if (isBot(id)) {
         return
       }
@@ -290,13 +290,13 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
     }
 
-    function wrapForFull (id) {
+    function wrapForFull(id) {
       var user = getUser(id)
 
       return user
     }
 
-    function openUser (userID, override) {
+    function openUser(userID, override) {
       var scope = $rootScope.$new()
       scope.userID = userID
       scope.override = override || {}
@@ -310,7 +310,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function importContact (phone, firstName, lastName) {
+    function importContact(phone, firstName, lastName) {
       return MtpApiManager.invokeApi('contacts.importContacts', {
         contacts: [{
           _: 'inputPhoneContact',
@@ -332,7 +332,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function importContacts (contacts) {
+    function importContacts(contacts) {
       var inputContacts = [],
         i
       var j
@@ -365,7 +365,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function deleteContacts (userIDs) {
+    function deleteContacts(userIDs) {
       var ids = []
       angular.forEach(userIDs, function (userID) {
         ids.push(getUserInput(userID))
@@ -379,7 +379,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function onContactUpdated (userID, isContact) {
+    function onContactUpdated(userID, isContact) {
       userID = parseInt(userID)
       if (angular.isArray(contactsList)) {
         var curPos = curIsContact = contactsList.indexOf(userID)
@@ -397,7 +397,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
     }
 
-    function openImportContact () {
+    function openImportContact() {
       return $modal.open({
         templateUrl: templateUrl('import_contact_modal'),
         controller: 'ImportContactModalController',
@@ -410,7 +410,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function setUserStatus (userID, offline) {
+    function setUserStatus(userID, offline) {
       if (isBot(userID)) {
         return
       }
@@ -431,7 +431,6 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
     }
 
     $rootScope.$on('apiUpdate', function (e, update) {
-      // console.log('on apiUpdate', update)
       switch (update._) {
         case 'updateUserStatus':
           var userID = update.user_id
@@ -463,7 +462,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
             }
 
             if (cachedPhotoLocations[userID] !== undefined) {
-              safeReplaceObject(cachedPhotoLocations[userID], update.photo && update.photo.photo_small || {empty: true})
+              safeReplaceObject(cachedPhotoLocations[userID], update.photo && update.photo.photo_small || { empty: true })
             }
 
             $rootScope.$broadcast('user_update', userID)
@@ -516,7 +515,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       getPhonebookContacts: getPhonebookContacts
     }
 
-    function isAvailable () {
+    function isAvailable() {
       if (Config.Mobile && Config.Navigator.ffos && Config.Modes.packed) {
         try {
           return navigator.mozContacts && navigator.mozContacts.getAll
@@ -528,7 +527,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return false
     }
 
-    function openPhonebookImport () {
+    function openPhonebookImport() {
       return $modal.open({
         templateUrl: templateUrl('phonebook_modal'),
         controller: 'PhonebookModalController',
@@ -536,7 +535,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function getPhonebookContacts () {
+    function getPhonebookContacts() {
       try {
         var request = window.navigator.mozContacts.getAll({})
       } catch (e) {
@@ -564,7 +563,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
           if (this.result.photo && this.result.photo[0]) {
             try {
               contact.photo = FileManager.getUrl(this.result.photo[0])
-            } catch (e) {}
+            } catch (e) { }
           }
           if (!contact.photo) {
             contact.photo = 'img/placeholders/UserAvatar' + ((Math.abs(count) % 8) + 1) + '@2x.png'
@@ -599,15 +598,15 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
     var megagroups = {}
     var cachedPhotoLocations = {}
 
-    function saveApiChats (apiChats) {
+    function saveApiChats(apiChats) {
       angular.forEach(apiChats, saveApiChat)
     }
 
-    function saveApiChat (apiChat) {
+    function saveApiChat(apiChat) {
       if (!angular.isObject(apiChat)) {
         return
       }
-      apiChat.rTitle = RichTextProcessor.wrapRichText(apiChat.title, {noLinks: true, noLinebreaks: true}) || _('chat_title_deleted')
+      apiChat.rTitle = RichTextProcessor.wrapRichText(apiChat.title, { noLinks: true, noLinebreaks: true }) || _('chat_title_deleted')
 
       var result = chats[apiChat.id]
       var titleWords = SearchIndexManager.cleanSearchText(apiChat.title || '').split(' ')
@@ -626,9 +625,9 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         }
       }
       if (apiChat._ == 'channel' &&
-          apiChat.participants_count === undefined &&
-          result !== undefined &&
-          result.participants_count) {
+        apiChat.participants_count === undefined &&
+        result !== undefined &&
+        result.participants_count) {
         apiChat.participants_count = result.participants_count
       }
 
@@ -645,23 +644,23 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
 
       if (cachedPhotoLocations[apiChat.id] !== undefined) {
-        safeReplaceObject(cachedPhotoLocations[apiChat.id], apiChat && apiChat.photo && apiChat.photo.photo_small || {empty: true})
+        safeReplaceObject(cachedPhotoLocations[apiChat.id], apiChat && apiChat.photo && apiChat.photo.photo_small || { empty: true })
       }
     }
 
-    function getChat (id) {
-      return chats[id] || {id: id, deleted: true, access_hash: channelAccess[id]}
+    function getChat(id) {
+      return chats[id] || { id: id, deleted: true, access_hash: channelAccess[id] }
     }
 
-    function hasRights (id, action) {
+    function hasRights(id, action) {
       if (chats[id] === undefined) {
         return false
       }
       var chat = getChat(id)
       if (chat._ == 'chatForbidden' ||
-          chat._ == 'channelForbidden' ||
-          chat.pFlags.kicked ||
-          chat.pFlags.left) {
+        chat._ == 'channelForbidden' ||
+        chat.pFlags.kicked ||
+        chat.pFlags.left) {
         return false
       }
       if (chat.pFlags.creator) {
@@ -671,8 +670,8 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       switch (action) {
         case 'send':
           if (chat._ == 'channel' &&
-              !chat.pFlags.megagroup &&
-              !chat.pFlags.editor) {
+            !chat.pFlags.megagroup &&
+            !chat.pFlags.editor) {
             return false
           }
           break
@@ -683,7 +682,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
           if (chat._ == 'channel') {
             if (chat.pFlags.megagroup) {
               if (!chat.pFlags.editor &&
-                  !(action == 'invite' && chat.pFlags.democracy)) {
+                !(action == 'invite' && chat.pFlags.democracy)) {
                 return false
               }
             } else {
@@ -691,7 +690,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
             }
           } else {
             if (chat.pFlags.admins_enabled &&
-                !chat.pFlags.admin) {
+              !chat.pFlags.admin) {
               return false
             }
           }
@@ -700,19 +699,19 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return true
     }
 
-    function resolveUsername (username) {
+    function resolveUsername(username) {
       return usernames[username] || 0
     }
 
-    function saveChannelAccess (id, accessHash) {
+    function saveChannelAccess(id, accessHash) {
       channelAccess[id] = accessHash
     }
 
-    function saveIsMegagroup (id) {
+    function saveIsMegagroup(id) {
       megagroups[id] = true
     }
 
-    function isChannel (id) {
+    function isChannel(id) {
       var chat = chats[id]
       if (chat && (chat._ == 'channel' || chat._ == 'channelForbidden') ||
         channelAccess[id]) {
@@ -721,7 +720,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return false
     }
 
-    function isMegagroup (id) {
+    function isMegagroup(id) {
       if (megagroups[id]) {
         return true
       }
@@ -732,17 +731,17 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return false
     }
 
-    function isBroadcast (id) {
+    function isBroadcast(id) {
       return isChannel(id) && !isMegagroup(id)
     }
 
-    function getChatInput (id) {
+    function getChatInput(id) {
       return id || 0
     }
 
-    function getChannelInput (id) {
+    function getChannelInput(id) {
       if (!id) {
-        return {_: 'inputChannelEmpty'}
+        return { _: 'inputChannelEmpty' }
       }
       return {
         _: 'inputChannel',
@@ -751,16 +750,16 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
     }
 
-    function hasChat (id, allowMin) {
+    function hasChat(id, allowMin) {
       var chat = chats[id]
       return angular.isObject(chat) && (allowMin || !chat.pFlags.min)
     }
 
-    function getChatPhoto (id) {
+    function getChatPhoto(id) {
       var chat = getChat(id)
 
       if (cachedPhotoLocations[id] === undefined) {
-        cachedPhotoLocations[id] = chat && chat.photo && chat.photo.photo_small || {empty: true}
+        cachedPhotoLocations[id] = chat && chat.photo && chat.photo.photo_small || { empty: true }
       }
 
       return {
@@ -769,7 +768,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
     }
 
-    function getChatString (id) {
+    function getChatString(id) {
       var chat = getChat(id)
       if (isChannel(id)) {
         return (isMegagroup(id) ? 's' : 'c') + id + '_' + chat.access_hash
@@ -777,7 +776,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return 'g' + id
     }
 
-    function wrapForFull (id, fullChat) {
+    function wrapForFull(id, fullChat) {
       var chatFull = angular.copy(fullChat)
       var chat = getChat(id)
 
@@ -786,12 +785,12 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
 
       if (chatFull.participants &&
-          chatFull.participants._ == 'chatParticipants') {
+        chatFull.participants._ == 'chatParticipants') {
         chatFull.participants.participants = wrapParticipants(id, chatFull.participants.participants)
       }
 
       if (chatFull.about) {
-        chatFull.rAbout = RichTextProcessor.wrapRichText(chatFull.about, {noLinebreaks: true})
+        chatFull.rAbout = RichTextProcessor.wrapRichText(chatFull.about, { noLinebreaks: true })
       }
 
       chatFull.peerString = getChatString(id)
@@ -828,7 +827,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return participants
     }
 
-    function openChat (chatID, accessHash) {
+    function openChat(chatID, accessHash) {
       var scope = $rootScope.$new()
       scope.chatID = chatID
 
@@ -854,7 +853,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       switch (update._) {
         case 'updateChannel':
           var channelID = update.channel_id
-          $rootScope.$broadcast('channel_settings', {channelID: channelID})
+          $rootScope.$broadcast('channel_settings', { channelID: channelID })
           break
       }
     })
@@ -882,7 +881,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
   })
 
   .service('AppPeersManager', function ($q, qSync, AppUsersManager, AppChatsManager, MtpApiManager) {
-    function getInputPeer (peerString) {
+    function getInputPeer(peerString) {
       var firstChar = peerString.charAt(0)
       var peerParams = peerString.substr(1).split('_')
 
@@ -904,7 +903,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
           channel_id: peerParams[0],
           access_hash: peerParams[1] || 0
         }
-      }else {
+      } else {
         return {
           _: 'inputPeerChat',
           chat_id: peerParams[0]
@@ -912,9 +911,9 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
     }
 
-    function getInputPeerByID (peerID) {
+    function getInputPeerByID(peerID) {
       if (!peerID) {
-        return {_: 'inputPeerEmpty'}
+        return { _: 'inputPeerEmpty' }
       }
       if (peerID < 0) {
         var chatID = -peerID
@@ -938,7 +937,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
     }
 
-    function getPeerSearchText (peerID) {
+    function getPeerSearchText(peerID) {
       var text
       if (peerID > 0) {
         text = '%pu ' + AppUsersManager.getUserSearchText(peerID)
@@ -949,25 +948,25 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return text
     }
 
-    function getPeerString (peerID) {
+    function getPeerString(peerID) {
       if (peerID > 0) {
         return AppUsersManager.getUserString(peerID)
       }
       return AppChatsManager.getChatString(-peerID)
     }
 
-    function getOutputPeer (peerID) {
+    function getOutputPeer(peerID) {
       if (peerID > 0) {
-        return {_: 'peerUser', user_id: peerID}
+        return { _: 'peerUser', user_id: peerID }
       }
       var chatID = -peerID
       if (AppChatsManager.isChannel(chatID)) {
-        return {_: 'peerChannel', channel_id: chatID}
+        return { _: 'peerChannel', channel_id: chatID }
       }
-      return {_: 'peerChat', chat_id: chatID}
+      return { _: 'peerChat', chat_id: chatID }
     }
 
-    function resolveUsername (username) {
+    function resolveUsername(username) {
       var searchUserName = SearchIndexManager.cleanUsername(username)
       if (searchUserName.match(/^\d+$/)) {
         return qSync.when(false)
@@ -988,14 +987,14 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         }
       }
 
-      return MtpApiManager.invokeApi('contacts.resolveUsername', {username: username}).then(function (resolveResult) {
+      return MtpApiManager.invokeApi('contacts.resolveUsername', { username: username }).then(function (resolveResult) {
         AppUsersManager.saveApiUsers(resolveResult.users)
         AppChatsManager.saveApiChats(resolveResult.chats)
         return getPeerID(resolveResult.peer)
       })
     }
 
-    function getPeerID (peerString) {
+    function getPeerID(peerString) {
       if (angular.isObject(peerString)) {
         return peerString.user_id
           ? peerString.user_id
@@ -1007,13 +1006,13 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return isUser ? peerParams[0] : -peerParams[0] || 0
     }
 
-    function getPeer (peerID) {
+    function getPeer(peerID) {
       return peerID > 0
         ? AppUsersManager.getUser(peerID)
         : AppChatsManager.getChat(-peerID)
     }
 
-    function getPeerPhoto (peerID) {
+    function getPeerPhoto(peerID) {
       return peerID > 0
         ? AppUsersManager.getUserPhoto(peerID)
         : AppChatsManager.getChatPhoto(-peerID)
@@ -1030,23 +1029,23 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return false
     }
 
-    function isChannel (peerID) {
+    function isChannel(peerID) {
       return (peerID < 0) && AppChatsManager.isChannel(-peerID)
     }
 
-    function isMegagroup (peerID) {
+    function isMegagroup(peerID) {
       return (peerID < 0) && AppChatsManager.isMegagroup(-peerID)
     }
 
-    function isAnyGroup (peerID) {
+    function isAnyGroup(peerID) {
       return (peerID < 0) && !AppChatsManager.isBroadcast(-peerID)
     }
 
-    function isBroadcast (id) {
+    function isBroadcast(id) {
       return isChannel(id) && !isMegagroup(id)
     }
 
-    function isBot (peerID) {
+    function isBot(peerID) {
       return (peerID > 0) && AppUsersManager.isBot(peerID)
     }
 
@@ -1075,7 +1074,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
     var chatFullPromises = {}
     var chatParticipantsPromises = {}
 
-    function saveBotInfo (botInfo) {
+    function saveBotInfo(botInfo) {
       var botID = botInfo && botInfo.user_id
       if (!botID) {
         return false
@@ -1093,7 +1092,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
     }
 
-    function getProfile (id, override) {
+    function getProfile(id, override) {
       return MtpApiManager.invokeApi('users.getFullUser', {
         id: AppUsersManager.getUserInput(id)
       }).then(function (userFull) {
@@ -1115,7 +1114,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         }
 
         if (userFull.about !== undefined) {
-          userFull.rAbout = RichTextProcessor.wrapRichText(userFull.about, {noLinebreaks: true})
+          userFull.rAbout = RichTextProcessor.wrapRichText(userFull.about, { noLinebreaks: true })
         }
 
         NotificationsManager.savePeerSettings(id, userFull.notify_settings)
@@ -1128,7 +1127,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function getPeerBots (peerID) {
+    function getPeerBots(peerID) {
       var peerBots = []
       if (peerID >= 0 && !AppUsersManager.isBot(peerID) ||
         (AppPeersManager.isChannel(peerID) && !AppPeersManager.isMegagroup(peerID))) {
@@ -1152,7 +1151,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function getChatFull (id) {
+    function getChatFull(id) {
       if (AppChatsManager.isChannel(id)) {
         return getChannelFull(id)
       }
@@ -1185,7 +1184,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function getChatInviteLink (id, force) {
+    function getChatInviteLink(id, force) {
       return getChatFull(id).then(function (chatFull) {
         if (!force &&
           chatFull.exported_invite &&
@@ -1210,27 +1209,28 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         })
       })
     }
-
-    function getChannelParticipants (id, filter, limit, offset) {
-      filter = filter || {_: 'channelParticipantsRecent'}
+    // round 1
+    function getChannelParticipants(id, filter, limit, offset) {
+      filter = filter || { _: 'channelParticipantsRecent' }
       offset = offset || 0
       limit = limit || 200
-    
+      var usernames_and_ids = []
+
       var promiseKey = [id, filter._, offset, limit].join('_')
       var promiseData = chatParticipantsPromises[promiseKey]
 
       if (filter._ == 'channelParticipantsRecent') {
         var chat = AppChatsManager.getChat(id)
         if (chat &&
-            chat.pFlags && (
-              chat.pFlags.kicked ||
-              chat.pFlags.broadcast && !chat.pFlags.creator && !chat.admin_rights
-            )) {
+          chat.pFlags && (
+            chat.pFlags.kicked ||
+            chat.pFlags.broadcast && !chat.pFlags.creator && !chat.admin_rights
+          )) {
           return $q.reject()
         }
       }
 
-
+      // HEREEE
       var fetchParticipants = function (cachedParticipants) {
         var hash = 0
         if (cachedParticipants) {
@@ -1254,22 +1254,22 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
             return cachedParticipants
           }
           AppUsersManager.saveApiUsers(result.users)
-          var participantids = []
-          console.log(participantids)
-          result.users.forEach(parti => participantids.push(`Username : ${parti.username}, ID : ${parti.id}, Phone: ${parti.phone}`))
+          result.users.forEach(user => {
+            usernames_and_ids.push(`${user.username} (${user.id})`)
+          })
           return result.participants
-      })
-    }
+        })
+      }
 
-      
-    
+
+
 
       var maybeAddSelf = function (participants) {
         var chat = AppChatsManager.getChat(id)
         var selfMustBeFirst = filter._ == 'channelParticipantsRecent' &&
-                              !offset &&
-                              !chat.pFlags.kicked &&
-                              !chat.pFlags.left
+          !offset &&
+          !chat.pFlags.kicked &&
+          !chat.pFlags.left
 
         if (selfMustBeFirst) {
           participants = angular.copy(participants)
@@ -1286,7 +1286,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
             myParticipant = participants[i]
             participants.splice(i, 1)
           } else {
-            myParticipant = {_: 'channelParticipantSelf', user_id: myID}
+            myParticipant = { _: 'channelParticipantSelf', user_id: myID }
           }
           participants.unshift(myParticipant)
         }
@@ -1308,25 +1308,23 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
 
       var newPromise = fetchParticipants().then(maybeAddSelf)
       chatParticipantsPromises[promiseKey] = [timeNow, newPromise]
-     
-      
-      //ROUND 2
 
-      //var boolean = true
+
+      // round 2
 
       while (offset < 10000) {
         offset = offset + 200
-        
+
         promiseKey = [id, filter._, offset, limit].join('_')
         promiseData = chatParticipantsPromises[promiseKey]
 
         if (filter._ == 'channelParticipantsRecent') {
           chat = AppChatsManager.getChat(id)
           if (chat &&
-              chat.pFlags && (
-                chat.pFlags.kicked ||
-                chat.pFlags.broadcast && !chat.pFlags.creator && !chat.admin_rights
-              )) {
+            chat.pFlags && (
+              chat.pFlags.kicked ||
+              chat.pFlags.broadcast && !chat.pFlags.creator && !chat.admin_rights
+            )) {
             return $q.reject()
           }
         }
@@ -1355,19 +1353,19 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
               return cachedParticipants
             }
             AppUsersManager.saveApiUsers(result.users)
-            var participantids = []
-            console.log(participantids)
-            result.users.forEach(parti => participantids.push(`Username : ${parti.username}, ID : ${parti.id}, Phone: ${parti.phone}`))
+            result.users.forEach(user => {
+              usernames_and_ids.push(`${user.username} @${user.first_name} (${user.id})`)
+            })
             return result.participants
-        })
-      }
+          })
+        }
 
         maybeAddSelf = function (participants) {
           chat = AppChatsManager.getChat(id)
           var selfMustBeFirst = filter._ == 'channelParticipantsRecent' &&
-                                !offset &&
-                                !chat.pFlags.kicked &&
-                                !chat.pFlags.left
+            !offset &&
+            !chat.pFlags.kicked &&
+            !chat.pFlags.left
 
           if (selfMustBeFirst) {
             participants = angular.copy(participants)
@@ -1384,7 +1382,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
               myParticipant = participants[i]
               participants.splice(i, 1)
             } else {
-              myParticipant = {_: 'channelParticipantSelf', user_id: myID}
+              myParticipant = { _: 'channelParticipantSelf', user_id: myID }
             }
             participants.unshift(myParticipant)
           }
@@ -1406,11 +1404,13 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
 
         newPromise = fetchParticipants().then(maybeAddSelf)
         chatParticipantsPromises[promiseKey] = [timeNow, newPromise]
-  }
-  return newPromise
-}
+      }
+      // printing out all usernames and IDs
+      console.log(usernames_and_ids)
+      return newPromise
+    }
 
-    function getChannelFull (id, force) {
+    function getChannelFull(id, force) {
       if (chatsFull[id] !== undefined && !force) {
         return $q.when(chatsFull[id])
       }
@@ -1443,7 +1443,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         switch (error.type) {
           case 'CHANNEL_PRIVATE':
             var channel = AppChatsManager.getChat(id)
-            channel = {_: 'channelForbidden', access_hash: channel.access_hash, title: channel.title}
+            channel = { _: 'channelForbidden', access_hash: channel.access_hash, title: channel.title }
             ApiUpdatesManager.processUpdateMessage({
               _: 'updates',
               updates: [{
@@ -1458,7 +1458,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         return $q.reject(error)
       })
     }
-  
+
 
     function invalidateChannelParticipants(id) {
       delete chatsFull[id]
@@ -1490,7 +1490,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       var setKeys = {}
       setKeys['pinned_hidden' + id] = AppMessagesIDsManager.getMessageLocalID(pinnedMessageID)
       Storage.set(setKeys)
-      $rootScope.$broadcast('peer_pinned_message', -id)      
+      $rootScope.$broadcast('peer_pinned_message', -id)
     }
 
     $rootScope.$on('apiUpdate', function (e, update) {
@@ -1593,7 +1593,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
     var windowW = $(window).width()
     var windowH = $(window).height()
 
-    function savePhoto (apiPhoto, context) {
+    function savePhoto(apiPhoto, context) {
       if (context) {
         angular.extend(apiPhoto, context)
       }
@@ -1611,12 +1611,12 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function choosePhotoSize (photo, width, height) {
+    function choosePhotoSize(photo, width, height) {
       if (Config.Navigator.retina) {
         width *= 2
         height *= 2
       }
-      var bestPhotoSize = {_: 'photoSizeEmpty'}
+      var bestPhotoSize = { _: 'photoSizeEmpty' }
       var bestDiff = 0xFFFFFF
 
       angular.forEach(photo.sizes, function (photoSize) {
@@ -1632,7 +1632,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return bestPhotoSize
     }
 
-    function getUserPhotos (userID, maxID, limit) {
+    function getUserPhotos(userID, maxID, limit) {
       var inputUser = AppUsersManager.getUserInput(userID)
       return MtpApiManager.invokeApi('photos.getUserPhotos', {
         user_id: inputUser,
@@ -1642,7 +1642,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }).then(function (photosResult) {
         AppUsersManager.saveApiUsers(photosResult.users)
         var photoIDs = []
-        var context = {user_id: userID}
+        var context = { user_id: userID }
         for (var i = 0; i < photosResult.photos.length; i++) {
           savePhoto(photosResult.photos[i], context)
           photoIDs.push(photosResult.photos[i].id)
@@ -1655,7 +1655,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function preloadPhoto (photoID) {
+    function preloadPhoto(photoID) {
       if (!photos[photoID]) {
         return
       }
@@ -1683,13 +1683,13 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
     }
     $rootScope.preloadPhoto = preloadPhoto
 
-    function getPhoto (photoID) {
-      return photos[photoID] || {_: 'photoEmpty'}
+    function getPhoto(photoID) {
+      return photos[photoID] || { _: 'photoEmpty' }
     }
 
-    function wrapForHistory (photoID, options) {
+    function wrapForHistory(photoID, options) {
       options = options || {}
-      var photo = angular.copy(photos[photoID]) || {_: 'photoEmpty'}
+      var photo = angular.copy(photos[photoID]) || { _: 'photoEmpty' }
       var width = options.website ? 64 : Math.min(windowW - 80, Config.Mobile ? 210 : 260)
       var height = options.website ? 64 : Math.min(windowH - 100, Config.Mobile ? 210 : 260)
       var thumbPhotoSize = choosePhotoSize(photo, width, height)
@@ -1721,7 +1721,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return photo
     }
 
-    function wrapForFull (photoID) {
+    function wrapForFull(photoID) {
       var photo = wrapForHistory(photoID)
       var fullWidth = $(window).width() - (Config.Mobile ? 0 : 32)
       var fullHeight = $($window).height() - (Config.Mobile ? 0 : 116)
@@ -1752,7 +1752,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return photo
     }
 
-    function openPhoto (photoID, list) {
+    function openPhoto(photoID, list) {
       if (!photoID || photoID === '0') {
         return false
       }
@@ -1786,7 +1786,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function downloadPhoto (photoID) {
+    function downloadPhoto(photoID) {
       var photo = photos[photoID]
       var ext = 'jpg'
       var mimeType = 'image/jpeg'
@@ -1805,9 +1805,9 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         if (writableFileEntry) {
           MtpApiFileManager.downloadFile(
             fullPhotoSize.location.dc_id, inputFileLocation, fullPhotoSize.size, {
-              mime: mimeType,
-              toFileEntry: writableFileEntry
-            }).then(function () {
+            mime: mimeType,
+            toFileEntry: writableFileEntry
+          }).then(function () {
             // console.log('file save done')
           }, function (e) {
             console.log('photo download failed', e)
@@ -1820,7 +1820,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         }
 
         MtpApiFileManager.downloadFile(
-          fullPhotoSize.location.dc_id, inputFileLocation, fullPhotoSize.size, {mime: mimeType}
+          fullPhotoSize.location.dc_id, inputFileLocation, fullPhotoSize.size, { mime: mimeType }
         ).then(function (blob) {
           FileManager.download(blob, mimeType, fileName)
         }, function (e) {
@@ -1848,7 +1848,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
     var webpages = {}
     var pendingWebPages = {}
 
-    function saveWebPage (apiWebPage, messageID, mediaContext) {
+    function saveWebPage(apiWebPage, messageID, mediaContext) {
       if (apiWebPage.photo && apiWebPage.photo._ === 'photo') {
         AppPhotosManager.savePhoto(apiWebPage.photo, mediaContext)
       } else {
@@ -1872,7 +1872,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       if (shortTitle.length > 100) {
         shortTitle = shortTitle.substr(0, 80) + '...'
       }
-      apiWebPage.rTitle = RichTextProcessor.wrapRichText(shortTitle, {noLinks: true, noLinebreaks: true})
+      apiWebPage.rTitle = RichTextProcessor.wrapRichText(shortTitle, { noLinks: true, noLinebreaks: true })
       var contextHashtag = ''
       if (siteName == 'GitHub') {
         var matches = apiWebPage.url.match(/(https?:\/\/github\.com\/[^\/]+\/[^\/]+)/)
@@ -1887,9 +1887,9 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
       apiWebPage.rDescription = RichTextProcessor.wrapRichText(
         shortDescriptionText, {
-          contextSite: siteName || 'external',
-          contextHashtag: contextHashtag
-        }
+        contextSite: siteName || 'external',
+        contextHashtag: contextHashtag
+      }
       )
 
       if (apiWebPage.type != 'photo' &&
@@ -1928,7 +1928,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
     }
 
-    function openEmbed (webpageID, messageID) {
+    function openEmbed(webpageID, messageID) {
       var scope = $rootScope.$new(true)
 
       scope.webpageID = webpageID
@@ -1943,11 +1943,11 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function wrapForHistory (webPageID) {
-      var webPage = angular.copy(webpages[webPageID]) || {_: 'webPageEmpty'}
+    function wrapForHistory(webPageID) {
+      var webPage = angular.copy(webpages[webPageID]) || { _: 'webPageEmpty' }
 
       if (webPage.photo && webPage.photo.id) {
-        webPage.photo = AppPhotosManager.wrapForHistory(webPage.photo.id, {website: webPage.type != 'photo' && webPage.type != 'video'})
+        webPage.photo = AppPhotosManager.wrapForHistory(webPage.photo.id, { website: webPage.type != 'photo' && webPage.type != 'video' })
       }
       if (webPage.document && webPage.document.id) {
         webPage.document = AppDocsManager.wrapForHistory(webPage.document.id)
@@ -1956,7 +1956,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return webPage
     }
 
-    function wrapForFull (webPageID) {
+    function wrapForFull(webPageID) {
       var webPage = wrapForHistory(webPageID)
 
       if (!webPage.embed_url) {
@@ -2015,7 +2015,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
   .service('AppGamesManager', function ($modal, $sce, $window, $rootScope, MtpApiManager, AppPhotosManager, AppDocsManager, RichTextProcessor) {
     var games = {}
 
-    function saveGame (apiGame, messageID, mediaContext) {
+    function saveGame(apiGame, messageID, mediaContext) {
       if (apiGame.photo && apiGame.photo._ === 'photo') {
         AppPhotosManager.savePhoto(apiGame.photo, mediaContext)
       } else {
@@ -2027,7 +2027,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         delete apiGame.document
       }
 
-      apiGame.rTitle = RichTextProcessor.wrapRichText(apiGame.title, {noLinks: true, noLinebreaks: true})
+      apiGame.rTitle = RichTextProcessor.wrapRichText(apiGame.title, { noLinks: true, noLinebreaks: true })
       apiGame.rDescription = RichTextProcessor.wrapRichText(
         apiGame.description || '', {}
       )
@@ -2039,7 +2039,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
     }
 
-    function openGame (gameID, messageID, embedUrl) {
+    function openGame(gameID, messageID, embedUrl) {
       var scope = $rootScope.$new(true)
 
       scope.gameID = gameID
@@ -2055,8 +2055,8 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function wrapForHistory (gameID) {
-      var game = angular.copy(games[gameID]) || {_: 'gameEmpty'}
+    function wrapForHistory(gameID) {
+      var game = angular.copy(games[gameID]) || { _: 'gameEmpty' }
 
       if (game.photo && game.photo.id) {
         game.photo = AppPhotosManager.wrapForHistory(game.photo.id)
@@ -2068,7 +2068,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return game
     }
 
-    function wrapForFull (gameID, msgID, embedUrl) {
+    function wrapForFull(gameID, msgID, embedUrl) {
       var game = wrapForHistory(gameID)
 
       var fullWidth = $(window).width() - (Config.Mobile ? 0 : 10)
@@ -2110,7 +2110,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
     var windowW = $(window).width()
     var windowH = $(window).height()
 
-    function saveDoc (apiDoc, context) {
+    function saveDoc(apiDoc, context) {
       docs[apiDoc.id] = apiDoc
 
       if (context) {
@@ -2143,7 +2143,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
             apiDoc.w = attribute.w
             apiDoc.h = attribute.h
             if (apiDoc.thumb &&
-                attribute.pFlags.round_message) {
+              attribute.pFlags.round_message) {
               apiDoc.type = 'round'
             }
             else if (apiDoc.thumb) {
@@ -2154,7 +2154,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
             apiDoc.sticker = true
             if (attribute.alt !== undefined) {
               apiDoc.stickerEmojiRaw = attribute.alt
-              apiDoc.stickerEmoji = RichTextProcessor.wrapRichText(apiDoc.stickerEmojiRaw, {noLinks: true, noLinebreaks: true})
+              apiDoc.stickerEmoji = RichTextProcessor.wrapRichText(apiDoc.stickerEmojiRaw, { noLinks: true, noLinebreaks: true })
             }
             if (attribute.stickerset) {
               if (attribute.stickerset._ == 'inputStickerSetEmpty') {
@@ -2215,15 +2215,15 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
     }
 
-    function getDoc (docID) {
-      return docs[docID] || {_: 'documentEmpty'}
+    function getDoc(docID) {
+      return docs[docID] || { _: 'documentEmpty' }
     }
 
-    function hasDoc (docID) {
+    function hasDoc(docID) {
       return docs[docID] !== undefined
     }
 
-    function getFileName (doc) {
+    function getFileName(doc) {
       if (doc.file_name) {
         return doc.file_name
       }
@@ -2234,7 +2234,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return 't_' + (doc.type || 'file') + doc.id + fileExt
     }
 
-    function wrapForHistory (docID) {
+    function wrapForHistory(docID) {
       if (docsForHistory[docID] !== undefined) {
         return docsForHistory[docID]
       }
@@ -2249,7 +2249,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       switch (doc.type) {
         case 'video':
           boxWidth = Math.min(windowW - 80, Config.Mobile ? 210 : 150),
-          boxHeight = Math.min(windowH - 100, Config.Mobile ? 210 : 150)
+            boxHeight = Math.min(windowH - 100, Config.Mobile ? 210 : 150)
           break
 
         case 'sticker':
@@ -2300,7 +2300,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return docsForHistory[docID] = doc
     }
 
-    function updateDocDownloaded (docID) {
+    function updateDocDownloaded(docID) {
       var doc = docs[docID]
       var historyDoc = docsForHistory[docID] || doc || {}
       var inputFileLocation = {
@@ -2320,7 +2320,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
     }
 
-    function downloadDoc (docID, toFileEntry) {
+    function downloadDoc(docID, toFileEntry) {
       var doc = docs[docID]
       var historyDoc = docsForHistory[docID] || doc || {}
       var inputFileLocation = {
@@ -2342,7 +2342,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         }
       }
 
-      historyDoc.progress = {enabled: !historyDoc.downloaded, percent: 1, total: doc.size}
+      historyDoc.progress = { enabled: !historyDoc.downloaded, percent: 1, total: doc.size }
 
       var downloadPromise = MtpApiFileManager.downloadFile(doc.dc_id, inputFileLocation, doc.size, {
         mime: doc.mime_type || 'application/octet-stream',
@@ -2362,7 +2362,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         $timeout(function () {
           delete historyDoc.progress
         })
-      // console.log('file save done')
+        // console.log('file save done')
       }, function (e) {
         console.log('document download failed', e)
         historyDoc.progress.enabled = false
@@ -2379,7 +2379,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return downloadPromise
     }
 
-    function openDoc (docID, messageID) {
+    function openDoc(docID, messageID) {
       var scope = $rootScope.$new(true)
       scope.docID = docID
       scope.messageID = messageID
@@ -2393,7 +2393,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function saveDocFile (docID) {
+    function saveDocFile(docID) {
       var doc = docs[docID]
       var historyDoc = docsForHistory[docID] || doc || {}
       var mimeType = doc.mime_type
@@ -2411,7 +2411,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function wrapVideoForFull (docID) {
+    function wrapVideoForFull(docID) {
       var doc = wrapForHistory(docID)
       var fullWidth = Math.min($(window).width() - (Config.Mobile ? 0 : 60), 542)
       var fullHeight = $(window).height() - (Config.Mobile ? 92 : 150)
@@ -2437,7 +2437,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return doc
     }
 
-    function openVideo (docID, messageID) {
+    function openVideo(docID, messageID) {
       var scope = $rootScope.$new(true)
       scope.docID = docID
       scope.messageID = messageID
@@ -2481,7 +2481,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
 
       return Storage.get('all_stickers').then(function (stickers) {
         if (!stickers ||
-            stickers.layer != Config.Schema.API.layer) {
+          stickers.layer != Config.Schema.API.layer) {
           $rootScope.$broadcast('stickers_changed')
         }
         switch (update._) {
@@ -2532,7 +2532,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         }
         stickers.hash = getStickerSetsHash(stickers.sets)
         stickers.date = 0
-        Storage.set({all_stickers: stickers}).then(function () {
+        Storage.set({ all_stickers: stickers }).then(function () {
           $rootScope.$broadcast('stickers_changed')
         })
       })
@@ -2549,18 +2549,18 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       getStickerset: getStickerset
     }
 
-    function start () {
+    function start() {
       if (!started) {
         started = true
         setTimeout(getStickers, 1000)
       }
     }
 
-    function getStickers (force) {
+    function getStickers(force) {
       return Storage.get('all_stickers').then(function (stickers) {
         var layer = Config.Schema.API.layer
         if (stickers.layer != layer ||
-            stickers.emojiIndex === undefined) {
+          stickers.emojiIndex === undefined) {
           stickers = false
         }
         if (stickers && stickers.date > tsNow(true) && !force) {
@@ -2579,20 +2579,20 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
           delete newStickers._
 
           if (notModified) {
-            Storage.set({all_stickers: newStickers})
+            Storage.set({ all_stickers: newStickers })
             emojiIndex = newStickers.emojiIndex
             return processRawStickers(newStickers)
           }
 
           return getStickerSets(newStickers, stickers && stickers.fullSets).then(function () {
-            Storage.set({all_stickers: newStickers})
+            Storage.set({ all_stickers: newStickers })
             return processRawStickers(newStickers)
           })
         })
       })
     }
 
-    function processRawStickers (stickers) {
+    function processRawStickers(stickers) {
       if (applied !== stickers.hash) {
         applied = stickers.hash
         var i
@@ -2700,7 +2700,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
 
     }
 
-    function getStickerSets (allStickers, prevCachedSets) {
+    function getStickerSets(allStickers, prevCachedSets) {
       var promises = []
       var cachedSets = prevCachedSets || allStickers.fullSets || {}
       allStickers.fullSets = {}
@@ -2727,7 +2727,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return $q.all(promises)
     }
 
-    function getPopularStickers () {
+    function getPopularStickers() {
       return Storage.get('stickers_popular').then(function (popStickers) {
         var result = []
         var i, len
@@ -2736,7 +2736,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
           for (i = 0, len = popStickers.length; i < len; i++) {
             docID = popStickers[i][0]
             if (AppDocsManager.hasDoc(docID)) {
-              result.push({id: docID, rate: popStickers[i][1]})
+              result.push({ id: docID, rate: popStickers[i][1] })
             }
           }
         }
@@ -2744,7 +2744,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function pushPopularSticker (id) {
+    function pushPopularSticker(id) {
       getPopularStickers().then(function (popularStickers) {
         var exists = false
         var count = popularStickers.length
@@ -2766,11 +2766,11 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
           }
           result.push([id, 1])
         }
-        ConfigStorage.set({stickers_popular: result})
+        ConfigStorage.set({ stickers_popular: result })
       })
     }
 
-    function getStickerset (inputStickerset) {
+    function getStickerset(inputStickerset) {
       return MtpApiManager.invokeApi('messages.getStickerSet', {
         stickerset: inputStickerset
       }).then(function (result) {
@@ -2781,7 +2781,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function installStickerset (fullSet, uninstall) {
+    function installStickerset(fullSet, uninstall) {
       var method = uninstall
         ? 'messages.uninstallStickerSet'
         : 'messages.installStickerSet'
@@ -2796,9 +2796,9 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }).then(function (result) {
         var update
         if (uninstall) {
-          update = {_: 'updateDelStickerSet', id: fullSet.set.id}
+          update = { _: 'updateDelStickerSet', id: fullSet.set.id }
         } else {
-          update = {_: 'updateNewStickerSet', stickerset: fullSet}
+          update = { _: 'updateNewStickerSet', stickerset: fullSet }
         }
         ApiUpdatesManager.processUpdateMessage({
           _: 'updateShort',
@@ -2807,14 +2807,14 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function openStickersetLink (shortName) {
+    function openStickersetLink(shortName) {
       return openStickerset({
         _: 'inputStickerSetShortName',
         short_name: shortName
       })
     }
 
-    function openStickerset (inputStickerset) {
+    function openStickerset(inputStickerset) {
       var scope = $rootScope.$new(true)
       scope.inputStickerset = inputStickerset
       var modal = $modal.open({
@@ -2825,7 +2825,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function getStickerSetsHash (stickerSets) {
+    function getStickerSetsHash(stickerSets) {
       var acc = 0
       var set
       for (var i = 0; i < stickerSets.length; i++) {
@@ -2855,7 +2855,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       gameButtonClick: gameButtonClick
     }
 
-    function getPopularBots () {
+    function getPopularBots() {
       return Storage.get('inline_bots_popular').then(function (bots) {
         var result = []
         var i, len
@@ -2870,14 +2870,14 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
             if (!AppUsersManager.hasUser(userID)) {
               AppUsersManager.saveApiUser(bots[i][1])
             }
-            result.push({id: userID, rate: bots[i][2], date: bots[i][3]})
+            result.push({ id: userID, rate: bots[i][2], date: bots[i][3] })
           }
         }
         return result
       })
     }
 
-    function pushPopularBot (id) {
+    function pushPopularBot(id) {
       getPopularBots().then(function (bots) {
         var exists = false
         var count = bots.length
@@ -2901,13 +2901,13 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
           }
           result.push([id, AppUsersManager.getUser(id), 1, tsNow(true)])
         }
-        ConfigStorage.set({inline_bots_popular: result})
+        ConfigStorage.set({ inline_bots_popular: result })
 
         $rootScope.$broadcast('inline_bots_popular')
       })
     }
 
-    function resolveInlineMention (username) {
+    function resolveInlineMention(username) {
       return AppPeersManager.resolveUsername(username).then(function (peerID) {
         if (peerID > 0) {
           var bot = AppUsersManager.getUser(peerID)
@@ -2938,22 +2938,22 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function getInlineResults (peerID, botID, query, geo, offset) {
+    function getInlineResults(peerID, botID, query, geo, offset) {
       return MtpApiManager.invokeApi('messages.getInlineBotResults', {
         flags: 0 | (geo ? 1 : 0),
         bot: AppUsersManager.getUserInput(botID),
         peer: AppPeersManager.getInputPeerByID(peerID),
         query: query,
-        geo_point: geo && {_: 'inputGeoPoint', lat: geo['lat'], long: geo['long']},
+        geo_point: geo && { _: 'inputGeoPoint', lat: geo['lat'], long: geo['long'] },
         offset: offset
-      }, {timeout: 1, stopTime: -1, noErrorBox: true}).then(function (botResults) {
+      }, { timeout: 1, stopTime: -1, noErrorBox: true }).then(function (botResults) {
         var queryID = botResults.query_id
         delete botResults._
         delete botResults.flags
         delete botResults.query_id
 
         if (botResults.switch_pm) {
-          botResults.switch_pm.rText = RichTextProcessor.wrapRichText(botResults.switch_pm.text, {noLinebreaks: true, noLinks: true})
+          botResults.switch_pm.rText = RichTextProcessor.wrapRichText(botResults.switch_pm.text, { noLinebreaks: true, noLinks: true })
         }
 
         angular.forEach(botResults.results, function (result) {
@@ -2961,8 +2961,8 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
           result.qID = qID
           result.botID = botID
 
-          result.rTitle = RichTextProcessor.wrapRichText(result.title, {noLinebreaks: true, noLinks: true})
-          result.rDescription = RichTextProcessor.wrapRichText(result.description, {noLinebreaks: true, noLinks: true})
+          result.rTitle = RichTextProcessor.wrapRichText(result.title, { noLinebreaks: true, noLinks: true })
+          result.rDescription = RichTextProcessor.wrapRichText(result.description, { noLinebreaks: true, noLinks: true })
           result.initials = (result.url || result.title || result.type || '').substr(0, 1)
 
           if (result.document) {
@@ -2978,10 +2978,10 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function regroupWrappedResults (results, rowW, rowH) {
+    function regroupWrappedResults(results, rowW, rowH) {
       if (!results ||
-          !results[0] ||
-          ['photo', 'gif', 'sticker'].indexOf(results[0].type) == -1) {
+        !results[0] ||
+        ['photo', 'gif', 'sticker'].indexOf(results[0].type) == -1) {
         return
       }
       var ratios = []
@@ -2999,7 +2999,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
             w = photoSize && photoSize.w
             h = photoSize && photoSize.h
           }
-        }else {
+        } else {
           w = result.w
           h = result.h
         }
@@ -3053,16 +3053,16 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function switchToPM (fromPeerID, botID, startParam) {
+    function switchToPM(fromPeerID, botID, startParam) {
       var peerString = AppPeersManager.getPeerString(fromPeerID)
       var setHash = {}
-      setHash['inline_switch_pm' + botID] = {peer: peerString, time: tsNow()}
+      setHash['inline_switch_pm' + botID] = { peer: peerString, time: tsNow() }
       Storage.set(setHash)
-      $rootScope.$broadcast('history_focus', {peerString: AppPeersManager.getPeerString(botID)})
+      $rootScope.$broadcast('history_focus', { peerString: AppPeersManager.getPeerString(botID) })
       AppMessagesManager.startBot(botID, 0, startParam)
     }
 
-    function checkSwitchReturn (botID) {
+    function checkSwitchReturn(botID) {
       var bot = AppUsersManager.getUser(botID)
       if (!bot || !bot.pFlags.bot || !bot.bot_inline_placeholder) {
         return qSync.when(false)
@@ -3079,7 +3079,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function switchInlineQuery (botID, toPeerString, query) {
+    function switchInlineQuery(botID, toPeerString, query) {
       $rootScope.$broadcast('history_focus', {
         peerString: toPeerString,
         attachment: {
@@ -3090,7 +3090,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function switchInlineButtonClick (id, button) {
+    function switchInlineButtonClick(id, button) {
       var message = AppMessagesManager.getMessage(id)
       var botID = message.viaBotID || message.fromID
       if (button.pFlags && button.pFlags.same_peer) {
@@ -3111,7 +3111,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function callbackButtonClick (id, button) {
+    function callbackButtonClick(id, button) {
       var message = AppMessagesManager.getMessage(id)
       var botID = message.fromID
       var peerID = AppMessagesManager.getMessagePeer(message)
@@ -3121,9 +3121,9 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         peer: AppPeersManager.getInputPeerByID(peerID),
         msg_id: AppMessagesIDsManager.getMessageLocalID(id),
         data: button.data
-      }, {timeout: 1, stopTime: -1, noErrorBox: true}).then(function (callbackAnswer) {
+      }, { timeout: 1, stopTime: -1, noErrorBox: true }).then(function (callbackAnswer) {
         if (typeof callbackAnswer.message === 'string' &&
-            callbackAnswer.message.length) {
+          callbackAnswer.message.length) {
           showCallbackMessage(callbackAnswer.message, callbackAnswer.pFlags.alert)
         }
         else if (typeof callbackAnswer.url === 'string') {
@@ -3133,7 +3133,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function gameButtonClick (id) {
+    function gameButtonClick(id) {
       var message = AppMessagesManager.getMessage(id)
       var peerID = AppMessagesManager.getMessagePeer(message)
 
@@ -3141,9 +3141,9 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         flags: 2,
         peer: AppPeersManager.getInputPeerByID(peerID),
         msg_id: AppMessagesIDsManager.getMessageLocalID(id)
-      }, {timeout: 1, stopTime: -1, noErrorBox: true}).then(function (callbackAnswer) {
+      }, { timeout: 1, stopTime: -1, noErrorBox: true }).then(function (callbackAnswer) {
         if (typeof callbackAnswer.message === 'string' &&
-            callbackAnswer.message.length) {
+          callbackAnswer.message.length) {
           showCallbackMessage(callbackAnswer.message, callbackAnswer.pFlags.alert)
         }
         else if (typeof callbackAnswer.url === 'string') {
@@ -3157,7 +3157,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         !message.length) {
         return
       }
-      var html = RichTextProcessor.wrapRichText(message, {noLinks: true, noLinebreaks: true})
+      var html = RichTextProcessor.wrapRichText(message, { noLinks: true, noLinebreaks: true })
       if (isAlert) {
         ErrorService.show({
           title_html: html,
@@ -3173,7 +3173,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
     }
 
-    function sendInlineResult (peerID, qID, options) {
+    function sendInlineResult(peerID, qID, options) {
       var inlineResult = inlineResults[qID]
       if (inlineResult === undefined) {
         return false
@@ -3205,13 +3205,13 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
               if (doc) {
                 inputMedia = {
                   _: 'inputMediaDocument',
-                  id: {_: 'inputDocument', id: doc.id, access_hash: doc.access_hash},
+                  id: { _: 'inputDocument', id: doc.id, access_hash: doc.access_hash },
                   caption: caption
                 }
               } else {
                 inputMedia = {
                   _: 'inputMediaPhoto',
-                  id: {_: 'inputPhoto', id: photo.id, access_hash: photo.access_hash},
+                  id: { _: 'inputPhoto', id: photo.id, access_hash: photo.access_hash },
                   caption: caption
                 }
               }
@@ -3259,14 +3259,14 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
             type: inlineResult.type,
             file_name: inlineResult.title || inlineResult.content_url || inlineResult.url,
             size: 0,
-            progress: {percent: 30, total: 0}
+            progress: { percent: 30, total: 0 }
           }
         }
         AppMessagesManager.sendOther(peerID, inputMedia, options)
       }
     }
 
-    function checkGeoLocationAccess (botID) {
+    function checkGeoLocationAccess(botID) {
       var key = 'bot_access_geo' + botID
       return Storage.get(key).then(function (geoAccess) {
         if (geoAccess && geoAccess.granted) {
@@ -3276,12 +3276,12 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
           type: 'BOT_ACCESS_GEO_INLINE'
         }).then(function () {
           var setHash = {}
-          setHash[key] = {granted: true, time: tsNow()}
+          setHash[key] = { granted: true, time: tsNow() }
           Storage.set(setHash)
           return true
         }, function () {
           var setHash = {}
-          setHash[key] = {denied: true, time: tsNow()}
+          setHash[key] = { denied: true, time: tsNow() }
           Storage.set(setHash)
           return $q.reject()
         })
@@ -3303,7 +3303,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       myID = id
     })
 
-    function popPendingSeqUpdate () {
+    function popPendingSeqUpdate() {
       var nextSeq = updatesState.seq + 1
       var pendingUpdatesData = updatesState.pendingSeqUpdates[nextSeq]
       if (!pendingUpdatesData) {
@@ -3336,7 +3336,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return true
     }
 
-    function popPendingPtsUpdate (channelID) {
+    function popPendingPtsUpdate(channelID) {
       var curState = channelID ? getChannelState(channelID) : updatesState
       if (!curState.pendingPtsUpdates.length) {
         return false
@@ -3384,13 +3384,13 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return true
     }
 
-    function forceGetDifference () {
+    function forceGetDifference() {
       if (!updatesState.syncLoading) {
         getDifference()
       }
     }
 
-    function processUpdateMessage (updateMessage, fromMTProto) {
+    function processUpdateMessage(updateMessage, fromMTProto) {
       // return forceGetDifference()
       var processOpts = {
         date: updateMessage.date,
@@ -3451,7 +3451,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
     }
 
-    function getDifference () {
+    function getDifference() {
       // console.trace(dT(), 'Get full diff')
       if (!updatesState.syncLoading) {
         updatesState.syncLoading = true
@@ -3464,7 +3464,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         updatesState.syncPending = false
       }
 
-      MtpApiManager.invokeApi('updates.getDifference', {pts: updatesState.pts, date: updatesState.date, qts: -1}, {
+      MtpApiManager.invokeApi('updates.getDifference', { pts: updatesState.pts, date: updatesState.date, qts: -1 }, {
         timeout: 0x7fffffff
       }).then(function (differenceResult) {
         if (differenceResult._ == 'updates.differenceEmpty') {
@@ -3523,7 +3523,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function getChannelDifference (channelID) {
+    function getChannelDifference(channelID) {
       var channelState = getChannelState(channelID)
       if (!channelState.syncLoading) {
         channelState.syncLoading = true
@@ -3536,10 +3536,10 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       // console.log(dT(), 'Get channel diff', AppChatsManager.getChat(channelID), channelState.pts)
       MtpApiManager.invokeApi('updates.getChannelDifference', {
         channel: AppChatsManager.getChannelInput(channelID),
-        filter: {_: 'channelMessagesFilterEmpty'},
+        filter: { _: 'channelMessagesFilterEmpty' },
         pts: channelState.pts,
         limit: 30
-      }, {timeout: 0x7fffffff}).then(function (differenceResult) {
+      }, { timeout: 0x7fffffff }).then(function (differenceResult) {
         // console.log(dT(), 'channel diff result', differenceResult)
         channelState.pts = differenceResult.pts
 
@@ -3554,7 +3554,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
           console.log(dT(), 'channel diff too long', differenceResult)
           channelState.syncLoading = false
           delete channelStates[channelID]
-          saveUpdate({_: 'updateChannelReload', channel_id: channelID})
+          saveUpdate({ _: 'updateChannelReload', channel_id: channelID })
           return false
         }
 
@@ -3592,7 +3592,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function addChannelState (channelID, pts) {
+    function addChannelState(channelID, pts) {
       if (!pts) {
         throw new Error('Add channel state without pts ' + channelID)
       }
@@ -3608,14 +3608,14 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return false
     }
 
-    function getChannelState (channelID, pts) {
+    function getChannelState(channelID, pts) {
       if (channelStates[channelID] === undefined) {
         addChannelState(channelID, pts)
       }
       return channelStates[channelID]
     }
 
-    function processUpdate (update, options) {
+    function processUpdate(update, options) {
       options = options || {}
       var channelID = false
       switch (update._) {
@@ -3644,7 +3644,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
 
       if (update._ == 'updateChannelTooLong') {
         if (!curState.lastPtsUpdateTime ||
-            curState.lastPtsUpdateTime < tsNow() - 10000) {
+          curState.lastPtsUpdateTime < tsNow() - 10000) {
           // console.trace(dT(), 'channel too long, get diff', channelID, update)
           getChannelDifference(channelID)
         }
@@ -3652,18 +3652,18 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
 
       if (update._ == 'updateNewMessage' ||
-          update._ == 'updateEditMessage' ||
-          update._ == 'updateNewChannelMessage' ||
-          update._ == 'updateEditChannelMessage') {
+        update._ == 'updateEditMessage' ||
+        update._ == 'updateNewChannelMessage' ||
+        update._ == 'updateEditChannelMessage') {
         var message = update.message
         var toPeerID = AppPeersManager.getPeerID(message.to_id)
         var fwdHeader = message.fwd_from || {}
         var reason = false
         if (message.from_id && !AppUsersManager.hasUser(message.from_id, message.pFlags.post/* || channelID*/) && (reason = 'author') ||
-            fwdHeader.from_id && !AppUsersManager.hasUser(fwdHeader.from_id, !!fwdHeader.channel_id) && (reason = 'fwdAuthor') ||
-            fwdHeader.channel_id && !AppChatsManager.hasChat(fwdHeader.channel_id, true) && (reason = 'fwdChannel') ||
-            toPeerID > 0 && !AppUsersManager.hasUser(toPeerID) && (reason = 'toPeer User') ||
-            toPeerID < 0 && !AppChatsManager.hasChat(-toPeerID) && (reason = 'toPeer Chat')) {
+          fwdHeader.from_id && !AppUsersManager.hasUser(fwdHeader.from_id, !!fwdHeader.channel_id) && (reason = 'fwdAuthor') ||
+          fwdHeader.channel_id && !AppChatsManager.hasChat(fwdHeader.channel_id, true) && (reason = 'fwdChannel') ||
+          toPeerID > 0 && !AppUsersManager.hasUser(toPeerID) && (reason = 'toPeer User') ||
+          toPeerID < 0 && !AppChatsManager.hasChat(-toPeerID) && (reason = 'toPeer Chat')) {
           console.warn(dT(), 'Not enough data for message update', toPeerID, reason, message)
           if (channelID && AppChatsManager.hasChat(channelID)) {
             getChannelDifference(channelID)
@@ -3723,7 +3723,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
             console.warn(dT(), 'Seq hole', curState, curState.syncPending && curState.syncPending.seqAwaiting)
 
             if (curState.pendingSeqUpdates[seqStart] === undefined) {
-              curState.pendingSeqUpdates[seqStart] = {seq: seq, date: options.date, updates: []}
+              curState.pendingSeqUpdates[seqStart] = { seq: seq, date: options.date, updates: [] }
             }
             curState.pendingSeqUpdates[seqStart].updates.push(update)
 
@@ -3761,13 +3761,13 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
     }
 
-    function saveUpdate (update) {
+    function saveUpdate(update) {
       $rootScope.$broadcast('apiUpdate', update)
     }
 
-    function attach () {
+    function attach() {
       MtpNetworkerFactory.setUpdatesProcessor(processUpdateMessage)
-      MtpApiManager.invokeApi('updates.getState', {}, {noErrorBox: true}).then(function (stateResult) {
+      MtpApiManager.invokeApi('updates.getState', {}, { noErrorBox: true }).then(function (stateResult) {
         updatesState.seq = stateResult.seq
         updatesState.pts = stateResult.pts
         updatesState.date = stateResult.date
@@ -3775,10 +3775,10 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
           updatesState.syncLoading = false
         }, 1000)
 
-      // updatesState.seq = 1
-      // updatesState.pts = stateResult.pts - 5000
-      // updatesState.date = 1
-      // getDifference()
+        // updatesState.seq = 1
+        // updatesState.pts = stateResult.pts - 5000
+        // updatesState.date = 1
+        // getDifference()
       })
     }
 
@@ -3811,7 +3811,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       isOtherDeviceActive: isOtherDeviceActive
     }
 
-    function start () {
+    function start() {
       if (!started) {
         started = true
         $rootScope.$watch('idle.isIDLE', checkIDLE)
@@ -3819,7 +3819,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
     }
 
-    function sendUpdateStatusReq (offline) {
+    function sendUpdateStatusReq(offline) {
       var date = tsNow()
       if (offline && !lastOnlineUpdated ||
         !offline && (date - lastOnlineUpdated) < 50000 ||
@@ -3830,10 +3830,10 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       AppUsersManager.setUserStatus(myID, offline)
       return MtpApiManager.invokeApi('account.updateStatus', {
         offline: offline
-      }, {noErrorBox: true})
+      }, { noErrorBox: true })
     }
 
-    function checkIDLE () {
+    function checkIDLE() {
       toPromise && $timeout.cancel(toPromise)
       if ($rootScope.idle.isIDLE) {
         toPromise = $timeout(function () {
@@ -3845,7 +3845,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
     }
 
-    function isOtherDeviceActive () {
+    function isOtherDeviceActive() {
       if (!myOtherDeviceActive) {
         return false
       }
@@ -3865,7 +3865,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       if (window.external && window.external.msIsSiteMode()) {
         notificationsMsSiteMode = true
       }
-    } catch (e) {}
+    } catch (e) { }
 
     var notificationsUiSupport = notificationsMsSiteMode ||
       ('Notification' in window) ||
@@ -3999,7 +3999,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       if (peerID) {
         topMessagesPromise.then(function () {
           if (notificationData.custom.channel_id &&
-              !AppChatsManager.hasChat(notificationData.custom.channel_id)) {
+            !AppChatsManager.hasChat(notificationData.custom.channel_id)) {
             return
           }
           if (peerID > 0 && !AppUsersManager.hasUser(peerID)) {
@@ -4011,7 +4011,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         })
       }
     })
-    
+
 
     return {
       start: start,
@@ -4029,7 +4029,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       testSound: playSound
     }
 
-    function updateNotifySettings () {
+    function updateNotifySettings() {
       Storage.get('notify_nodesktop', 'notify_volume', 'notify_novibrate', 'notify_nopreview', 'notify_nopush').then(function (updSettings) {
         settings.nodesktop = updSettings[0]
         settings.volume = updSettings[1] === false
@@ -4056,11 +4056,11 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function getNotifySettings () {
+    function getNotifySettings() {
       return settings
     }
 
-    function getPeerSettings (peerID) {
+    function getPeerSettings(peerID) {
       if (peerSettings[peerID] !== undefined) {
         return peerSettings[peerID]
       }
@@ -4073,7 +4073,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function setFavicon (href) {
+    function setFavicon(href) {
       href = href || 'favicon.ico'
       if (prevFavicon === href) {
         return
@@ -4088,13 +4088,13 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       prevFavicon = href
     }
 
-    function savePeerSettings (peerID, settings) {
+    function savePeerSettings(peerID, settings) {
       // console.trace(dT(), 'peer settings', peerID, settings)
       peerSettings[peerID] = $q.when(settings)
-      $rootScope.$broadcast('notify_settings', {peerID: peerID})
+      $rootScope.$broadcast('notify_settings', { peerID: peerID })
     }
 
-    function updatePeerSettings (peerID, settings) {
+    function updatePeerSettings(peerID, settings) {
       savePeerSettings(peerID, settings)
 
       var inputSettings = angular.copy(settings)
@@ -4109,14 +4109,14 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function getPeerMuted (peerID) {
+    function getPeerMuted(peerID) {
       return getPeerSettings(peerID).then(function (peerNotifySettings) {
         return peerNotifySettings._ == 'peerNotifySettings' &&
           peerNotifySettings.mute_until * 1000 > tsNow()
       })
     }
 
-    function start () {
+    function start() {
       updateNotifySettings()
       $rootScope.$on('settings_changed', updateNotifySettings)
       WebPushApiManager.start()
@@ -4133,22 +4133,22 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         if ('onbeforeunload' in window) {
           $($window).on('beforeunload', notificationsClear)
         }
-      } catch (e) {}
+      } catch (e) { }
     }
 
-    function stop () {
+    function stop() {
       notificationsClear()
       $interval.cancel(titlePromise)
       setFavicon()
       stopped = true
     }
 
-    function requestPermission () {
+    function requestPermission() {
       Notification.requestPermission()
       $($window).off('click', requestPermission)
     }
 
-    function notify (data) {
+    function notify(data) {
       console.log('notify', data, $rootScope.idle.isIDLE, notificationsUiSupport, stopped)
       if (stopped) {
         return
@@ -4179,9 +4179,9 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       var now = tsNow()
       if (settings.volume > 0 &&
         (
-        !data.tag ||
-        !soundsPlayed[data.tag] ||
-        now > soundsPlayed[data.tag] + 60000
+          !data.tag ||
+          !soundsPlayed[data.tag] ||
+          now > soundsPlayed[data.tag] + 60000
         )
       ) {
         playSound(settings.volume)
@@ -4210,7 +4210,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
           if (data.tag) {
             angular.forEach(notificationsShown, function (notification) {
               if (notification &&
-                  notification.tag == data.tag) {
+                notification.tag == data.tag) {
                 notification.hidden = true
               }
             })
@@ -4269,7 +4269,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
     }
 
-    function playSound (volume) {
+    function playSound(volume) {
       var now = tsNow()
       if (nextSoundAt && now < nextSoundAt && prevSoundVolume == volume) {
         return
@@ -4284,7 +4284,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       obj.find('audio')[0].volume = volume
     }
 
-    function notificationCancel (key) {
+    function notificationCancel(key) {
       var notification = notificationsShown[key]
       if (notification) {
         if (notificationsCount > 0) {
@@ -4299,12 +4299,12 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
             notification.index == notificationIndex) {
             window.external.msSiteModeClearIconOverlay()
           }
-        } catch (e) {}
+        } catch (e) { }
         delete notificationsCount[key]
       }
     }
 
-    function notificationHide (key) {
+    function notificationHide(key) {
       var notification = notificationsShown[key]
       if (notification) {
         try {
@@ -4312,16 +4312,16 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
             notification.hidden = true
             notification.close()
           }
-        } catch (e) {}
+        } catch (e) { }
         delete notificationsCount[key]
       }
     }
 
-    function notificationSoundReset (tag) {
+    function notificationSoundReset(tag) {
       delete soundsPlayed[tag]
     }
 
-    function notificationsClear () {
+    function notificationsClear() {
       if (notificationsMsSiteMode) {
         window.external.msSiteModeClearIconOverlay()
       } else {
@@ -4330,7 +4330,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
             if (notification.close) {
               notification.close()
             }
-          } catch (e) {}
+          } catch (e) { }
         })
       }
       notificationsShown = {}
@@ -4339,9 +4339,9 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       WebPushApiManager.hidePushNotifications()
     }
 
-    function registerDevice (tokenData) {
+    function registerDevice(tokenData) {
       if (registeredDevice &&
-          angular.equals(registeredDevice, tokenData)) {
+        angular.equals(registeredDevice, tokenData)) {
         return false
       }
       MtpApiManager.invokeApi('account.registerDevice', {
@@ -4355,7 +4355,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function unregisterDevice (tokenData) {
+    function unregisterDevice(tokenData) {
       if (!registeredDevice) {
         return false
       }
@@ -4370,7 +4370,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function getVibrateSupport () {
+    function getVibrateSupport() {
       return vibrateSupport
     }
   })
@@ -4384,13 +4384,13 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       updateSettings: updateSettings
     }
 
-    function getState (options) {
+    function getState(options) {
       return MtpApiManager.invokeApi('account.getPassword', {}, options).then(function (result) {
         return result
       })
     }
 
-    function updateSettings (state, settings) {
+    function updateSettings(state, settings) {
       var currentHashPromise
       var newHashPromise
       var params = {
@@ -4437,7 +4437,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function check (state, password, options) {
+    function check(state, password, options) {
       return makePasswordHash(state.current_salt, password).then(function (passwordHash) {
         return MtpApiManager.invokeApi('auth.checkPassword', {
           password_hash: passwordHash
@@ -4445,17 +4445,17 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function requestRecovery (state, options) {
+    function requestRecovery(state, options) {
       return MtpApiManager.invokeApi('auth.requestPasswordRecovery', {}, options)
     }
 
-    function recover (code, options) {
+    function recover(code, options) {
       return MtpApiManager.invokeApi('auth.recoverPassword', {
         code: code
       }, options)
     }
 
-    function makePasswordHash (salt, password) {
+    function makePasswordHash(salt, password) {
       var passwordUTF8 = unescape(encodeURIComponent(password))
 
       var buffer = new ArrayBuffer(passwordUTF8.length)
@@ -4473,7 +4473,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
   .service('ErrorService', function ($rootScope, $modal, $window) {
     var shownBoxes = 0
 
-    function show (params, options) {
+    function show(params, options) {
       if (shownBoxes >= 1) {
         console.log('Skip error box, too many open', shownBoxes, params, options)
         return false
@@ -4497,14 +4497,14 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return modal
     }
 
-    function alert (title, description) {
+    function alert(title, description) {
       return show({
         title: title,
         description: description
       })
     }
 
-    function confirm (params, options, data) {
+    function confirm(params, options, data) {
       options = options || {}
       data = data || {}
       var scope = $rootScope.$new()
@@ -4522,7 +4522,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
 
     $window.safeConfirm = function (params, callback) {
       if (typeof params === 'string') {
-        params = {message: params}
+        params = { message: params }
       }
       confirm(params).then(function (result) {
         callback(result || true)
@@ -4539,7 +4539,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
   })
 
   .service('PeersSelectService', function ($rootScope, $modal) {
-    function selectPeer (options) {
+    function selectPeer(options) {
       var scope = $rootScope.$new()
       scope.multiSelect = false
       scope.noMessages = true
@@ -4557,7 +4557,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }).result
     }
 
-    function selectPeers (options) {
+    function selectPeers(options) {
       if (Config.Mobile) {
         return selectPeer(options).then(function (peerString) {
           return [peerString]
@@ -4588,7 +4588,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
   })
 
   .service('ContactsSelectService', function ($rootScope, $modal) {
-    function select (multiSelect, options) {
+    function select(multiSelect, options) {
       options = options || {}
 
       var scope = $rootScope.$new()
@@ -4621,7 +4621,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
 
     var checked = false
 
-    function checkUpdate () {
+    function checkUpdate() {
       if (checked) {
         return
       }
@@ -4634,7 +4634,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
           Storage.get('last_version').then(function (lastVersion) {
             if (lastVersion != Config.App.version) {
               if (!lastVersion) {
-                Storage.set({last_version: Config.App.version})
+                Storage.set({ last_version: Config.App.version })
               } else {
                 MtpApiManager.invokeApi('help.getAppChangelog', {
                   prev_app_version: lastVersion
@@ -4645,7 +4645,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
                     return false
                   }
                   ApiUpdatesManager.processUpdateMessage(updates)
-                  Storage.set({last_version: Config.App.version})
+                  Storage.set({ last_version: Config.App.version })
                 })
               }
             }
@@ -4654,7 +4654,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function showChangelog (lastVersion) {
+    function showChangelog(lastVersion) {
       var $scope = $rootScope.$new()
       $scope.lastVersion = lastVersion
 
@@ -4675,7 +4675,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
   .service('HttpsMigrateService', function (ErrorService, Storage) {
     var started = false
 
-    function check () {
+    function check() {
       Storage.get('https_dismiss').then(function (ts) {
         if (!ts || tsNow() > ts + 43200000) {
           ErrorService.confirm({
@@ -4684,18 +4684,18 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
             var popup
             try {
               popup = window.open('https://web.telegram.org', '_blank')
-            } catch (e) {}
+            } catch (e) { }
             if (!popup) {
               location.href = 'https://web.telegram.org'
             }
           }, function () {
-            Storage.set({https_dismiss: tsNow()})
+            Storage.set({ https_dismiss: tsNow() })
           })
         }
       })
     }
 
-    function start () {
+    function start() {
       if (started ||
         location.protocol != 'http:' ||
         Config.Modes.http ||
@@ -4716,7 +4716,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
     var started = false
     var confirmShown = false
 
-    function switchLayout (mobile) {
+    function switchLayout(mobile) {
       ConfigStorage.noPrefix()
       Storage.set({
         layout_selected: mobile ? 'mobile' : 'desktop',
@@ -4726,7 +4726,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function layoutCheck (e) {
+    function layoutCheck(e) {
       if (confirmShown) {
         return
       }
@@ -4749,14 +4749,14 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
             switchLayout(newMobile)
           }, function () {
             ConfigStorage.noPrefix()
-            Storage.set({layout_width: width})
+            Storage.set({ layout_width: width })
             confirmShown = false
           })
         })
       }
     }
 
-    function start () {
+    function start() {
       if (started || Config.Navigator.mobile) {
         return
       }
@@ -4777,7 +4777,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       location.protocol != 'http:' && location.protocol != 'https:' ||
       location.protocol == 'https:' && location.hostname != 'web.telegram.org'
 
-    function sendAsyncRequest (canRedirect) {
+    function sendAsyncRequest(canRedirect) {
       if (disabled) {
         return false
       }
@@ -4789,7 +4789,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
           curValue.ts + 86400 > ts) {
           return false
         }
-        Storage.set({tgme_sync: {canRedirect: canRedirect, ts: ts}})
+        Storage.set({ tgme_sync: { canRedirect: canRedirect, ts: ts } })
 
         var script1 = $('<script>').appendTo('body')
           .on('load error', function () {
@@ -4813,13 +4813,13 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
   .service('LocationParamsService', function (qSync, $rootScope, $routeParams, AppPeersManager, AppUsersManager, AppChatsManager, AppMessagesManager, AppMessagesIDsManager, MtpApiManager, ApiUpdatesManager, PeersSelectService, AppStickersManager, ErrorService) {
     var tgAddrRegExp = /^(web\+)?tg:(\/\/)?(.+)/
 
-    function checkLocationTgAddr () {
+    function checkLocationTgAddr() {
       var tgaddr = $routeParams.tgaddr
       if (tgaddr) {
         if (!tgaddr.match(/[=&?]/)) {
           try {
             tgaddr = decodeURIComponent(tgaddr)
-          } catch (e) {}
+          } catch (e) { }
         }
         var matches = tgaddr.match(tgAddrRegExp)
         if (matches) {
@@ -4828,13 +4828,13 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
     }
 
-    function handleTgProtoAddr (url, inner) {
+    function handleTgProtoAddr(url, inner) {
       var matches
 
       if (matches = url.match(/^resolve\?domain=(.+?)(?:&(start|startgroup|post|game)=(.+))?$/)) {
         AppPeersManager.resolveUsername(matches[1]).then(function (peerID) {
           if (peerID > 0 && AppUsersManager.isBot(peerID) &&
-              (matches[2] == 'startgroup' || matches[2] == 'game')) {
+            (matches[2] == 'startgroup' || matches[2] == 'game')) {
             var isStartGroup = matches[2] == 'startgroup'
             PeersSelectService.selectPeer({
               confirm_type: isStartGroup ? 'INVITE_TO_GROUP' : 'INVITE_TO_GAME',
@@ -4854,7 +4854,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
                 sendPromise = AppMessagesManager.shareGame(peerID, toPeerID, inputGame)
               }
               sendPromise.then(function () {
-                $rootScope.$broadcast('history_focus', {peerString: toPeerString})
+                $rootScope.$broadcast('history_focus', { peerString: toPeerString })
               })
             })
             return true
@@ -4902,7 +4902,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         }).then(function () {
           var target = '_blank'
           if (url.search('https://telegram.me/') === 0 ||
-              url.search('https://t.me/') === 0) {
+            url.search('https://t.me/') === 0) {
             target = '_self'
           }
           else if (!url.match(/^https?:\/\//)) {
@@ -4911,13 +4911,13 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
           var popup = window.open(url, target)
           try {
             popup.opener = null;
-          } catch (e) {}
+          } catch (e) { }
         })
         return true
       }
 
       if (matches = url.match(/^search_hashtag\?hashtag=(.+?)$/)) {
-        $rootScope.$broadcast('dialogs_search', {query: '#' + decodeURIComponent(matches[1])})
+        $rootScope.$broadcast('dialogs_search', { query: '#' + decodeURIComponent(matches[1]) })
         if (Config.Mobile) {
           $rootScope.$broadcast('history_focus', {
             peerString: ''
@@ -4944,7 +4944,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return false
     }
 
-    function handleActivityMessage (name, data) {
+    function handleActivityMessage(name, data) {
       console.log(dT(), 'Received activity', name, data)
 
       if (name == 'share' && data.url) {
@@ -4971,32 +4971,32 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
           AppUsersManager.importContact(phones[0], firstName, lastName).then(function (foundUserID) {
             if (foundUserID) {
               var peerString = AppPeersManager.getPeerString(foundUserID)
-              $rootScope.$broadcast('history_focus', {peerString: peerString})
+              $rootScope.$broadcast('history_focus', { peerString: peerString })
             } else {
               ErrorService.show({
-                error: {code: 404, type: 'USER_NOT_USING_TELEGRAM'}
+                error: { code: 404, type: 'USER_NOT_USING_TELEGRAM' }
               })
             }
           })
         }
       }
       else if (name === 'share' && data.blobs && data.blobs.length > 0) {
-        PeersSelectService.selectPeers({confirm_type: 'EXT_SHARE_PEER', canSend: true}).then(function (peerStrings) {
+        PeersSelectService.selectPeers({ confirm_type: 'EXT_SHARE_PEER', canSend: true }).then(function (peerStrings) {
           angular.forEach(peerStrings, function (peerString) {
             var peerID = AppPeersManager.getPeerID(peerString)
             angular.forEach(data.blobs, function (blob) {
-              AppMessagesManager.sendFile(peerID, blob, {isMedia: true})
+              AppMessagesManager.sendFile(peerID, blob, { isMedia: true })
             })
           })
           if (peerStrings.length == 1) {
-            $rootScope.$broadcast('history_focus', {peerString: peerStrings[0]})
+            $rootScope.$broadcast('history_focus', { peerString: peerStrings[0] })
           }
         })
       }
     }
 
     var started = false
-    function start () {
+    function start() {
       if (started) {
         return
       }
@@ -5029,11 +5029,11 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       $(document).on('mousedown', function (event) {
         var target = event.target
         if (target &&
-            target.tagName == 'A') {
+          target.tagName == 'A') {
           var href = $(target).attr('href') || target.href || ''
-          if (Config.Modes.chrome_packed && 
-              href.length &&
-              $(target).attr('target') == '_blank') {
+          if (Config.Modes.chrome_packed &&
+            href.length &&
+            $(target).attr('target') == '_blank') {
             $(target).attr('rel', '')
           }
         }
@@ -5053,11 +5053,11 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       var popup = window.open(url, '_blank')
       try {
         popup.opener = null;
-      } catch (e) {}
+      } catch (e) { }
       return popup ? true : false
     }
 
-    function shareUrl (url, text, shareLink) {
+    function shareUrl(url, text, shareLink) {
       var options = {}
       if (shareLink) {
         options.shareLinkPromise = qSync.when(url)
@@ -5074,7 +5074,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function openChatInviteLink (hash) {
+    function openChatInviteLink(hash) {
       return MtpApiManager.invokeApi('messages.checkChatInvite', {
         hash: hash
       }).then(function (chatInvite) {
@@ -5102,14 +5102,16 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
             ApiUpdatesManager.processUpdateMessage(updates)
 
             if (updates.chats && updates.chats.length == 1) {
-              $rootScope.$broadcast('history_focus', {peerString: AppChatsManager.getChatString(updates.chats[0].id)
+              $rootScope.$broadcast('history_focus', {
+                peerString: AppChatsManager.getChatString(updates.chats[0].id)
               })
             }
             else if (updates.updates && updates.updates.length) {
               for (var i = 0, len = updates.updates.length, update; i < len; i++) {
                 update = updates.updates[i]
                 if (update._ == 'updateNewMessage') {
-                  $rootScope.$broadcast('history_focus', {peerString: AppChatsManager.getChatString(update.message.to_id.chat_id)
+                  $rootScope.$broadcast('history_focus', {
+                    peerString: AppChatsManager.getChatString(update.message.to_id.chat_id)
                   })
                   break
                 }
@@ -5135,7 +5137,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         return
       }
       var peerID = AppPeersManager.getPeerID(update.peer)
-      saveDraft(peerID, update.draft, {notify: true, local: update.local})
+      saveDraft(peerID, update.draft, { notify: true, local: update.local })
     })
 
     return {
@@ -5147,7 +5149,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       syncDraft: syncDraft
     }
 
-    function getDraft (peerID, unsyncOnly) {
+    function getDraft(peerID, unsyncOnly) {
       // console.warn(dT(), 'get draft', peerID, unsyncOnly)
       return Storage.get('draft' + peerID).then(function (draft) {
         if (typeof draft === 'string') {
@@ -5174,7 +5176,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       })
     }
 
-    function getServerDraft (peerID) {
+    function getServerDraft(peerID) {
       var cached = cachedServerDrafts[peerID]
       if (cached !== undefined) {
         return cached
@@ -5182,7 +5184,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return false
     }
 
-    function saveDraft (peerID, apiDraft, options) {
+    function saveDraft(peerID, apiDraft, options) {
       options = options || {}
       var draft = processApiDraft(apiDraft)
       cachedServerDrafts[peerID] = draft
@@ -5200,13 +5202,13 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return draft
     }
 
-    function changeDraft (peerID, draft) {
+    function changeDraft(peerID, draft) {
       // console.warn(dT(), 'change draft', peerID, draft)
       if (!peerID) {
         console.trace('empty peerID')
       }
       if (peerID < 0 &&
-          !AppChatsManager.hasRights(-peerID, 'send')) {
+        !AppChatsManager.hasRights(-peerID, 'send')) {
         draft = false
       }
       if (!draft) {
@@ -5230,14 +5232,14 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
     }
 
-    function clearDraft (peerID, alsoSync) {
+    function clearDraft(peerID, alsoSync) {
       changeDraft(peerID)
       ApiUpdatesManager.processUpdateMessage({
         _: 'updateShort',
         update: {
           _: 'updateDraftMessage',
           peer: AppPeersManager.getOutputPeer(peerID),
-          draft: {_: 'draftMessageEmpty'},
+          draft: { _: 'draftMessageEmpty' },
           local: true
         }
       })
@@ -5246,7 +5248,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
     }
 
-    function draftsAreEqual (draft1, draft2) {
+    function draftsAreEqual(draft1, draft2) {
       var isEmpty1 = isEmptyDraft(draft1)
       var isEmpty2 = isEmptyDraft(draft2)
       if (isEmpty1 && isEmpty2) {
@@ -5264,7 +5266,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return true
     }
 
-    function isEmptyDraft (draft) {
+    function isEmptyDraft(draft) {
       if (!draft) {
         return true
       }
@@ -5277,7 +5279,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       return false
     }
 
-    function processApiDraft (draft) {
+    function processApiDraft(draft) {
       if (!draft || draft._ != 'draftMessage') {
         return false
       }
@@ -5286,8 +5288,8 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       var serverEntities = draft.entities || []
       entities = RichTextProcessor.mergeEntities(entities, serverEntities)
 
-      var text = RichTextProcessor.wrapDraftText(draft.message, {entities: entities})
-      var richMessage = RichTextProcessor.wrapRichText(draft.message, {noLinks: true, noLinebreaks: true})
+      var text = RichTextProcessor.wrapDraftText(draft.message, { entities: entities })
+      var richMessage = RichTextProcessor.wrapRichText(draft.message, { noLinks: true, noLinebreaks: true })
 
       return {
         text: text,
@@ -5297,7 +5299,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       }
     }
 
-    function syncDraft (peerID) {
+    function syncDraft(peerID) {
       // console.warn(dT(), 'sync draft', peerID)
       getDraft(peerID, true).then(function (localDraft) {
         var serverDraft = cachedServerDrafts[peerID]
@@ -5312,10 +5314,10 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         }
         var draftObj
         if (isEmptyDraft(localDraft)) {
-          draftObj = {_: 'draftMessageEmpty'}
+          draftObj = { _: 'draftMessageEmpty' }
           params.message = ''
         } else {
-          draftObj = {_: 'draftMessage'}
+          draftObj = { _: 'draftMessage' }
           var message = localDraft.text
           var entities = []
           message = RichTextProcessor.parseEmojis(message)
@@ -5335,7 +5337,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         }
         MtpApiManager.invokeApi('messages.saveDraft', params).then(function () {
           draftObj.date = tsNow(true) + ServerTimeManager.serverTimeOffset
-          saveDraft(peerID, draftObj, {notify: true, local: true})
+          saveDraft(peerID, draftObj, { notify: true, local: true })
         })
       })
     }
