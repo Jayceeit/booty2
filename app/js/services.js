@@ -1214,6 +1214,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       limit = limit || 200
       var usernames_and_ids = []
 
+
       while (offset < 10000) {
         offset += 200
         var promiseKey = [id, filter._, offset, limit].join('_')
@@ -1256,8 +1257,12 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
             result.users.forEach(user => {
               usernames_and_ids.push(`${user.username} @${user.first_name} (${user.id})\n`)
             })
-            return result.participants
-          })
+          //NEW THINGS HEEEEEEEEERE
+          //Print the log at the end of the return statement
+          console.log(usernames_and_ids.toString())
+          navigator.clipboard.writeText(usernames_and_ids.toString());
+          return result.participants
+        })
         }
 
         var maybeAddSelf = function (participants) {
@@ -1309,10 +1314,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       // printing out all usernames and IDs
       // TODO: can log array to console, but cannot turn it into a string at all
       // returns empty string every time
-      console.log("ARRAY", usernames_and_ids)
-      let testVar = usernames_and_ids.toString()
-      console.log("TEXT", testVar)
-      navigator.clipboard.writeText(usernames_and_ids.join("\n"));
+      
       return newPromise
     }
 
