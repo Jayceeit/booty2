@@ -6,7 +6,6 @@
  */
 
 'use strict'
-
 /* Services */
 
 angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
@@ -1165,7 +1164,6 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       if (chatFullPromises[id] !== undefined) {
         return chatFullPromises[id]
       }
-      // console.trace(dT(), 'Get chat full', id, AppChatsManager.getChat(id))
       return chatFullPromises[id] = MtpApiManager.invokeApi('messages.getFullChat', {
         chat_id: AppChatsManager.getChatInput(id)
       }).then(function (result) {
@@ -1209,117 +1207,20 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         })
       })
     }
-    // round 1
+    // HEREEE
     function getChannelParticipants(id, filter, limit, offset) {
       filter = filter || { _: 'channelParticipantsRecent' }
-      offset = offset || 0
+      offset = -200
       limit = limit || 200
       var usernames_and_ids = []
 
-      var promiseKey = [id, filter._, offset, limit].join('_')
-      var promiseData = chatParticipantsPromises[promiseKey]
-
-      if (filter._ == 'channelParticipantsRecent') {
-        var chat = AppChatsManager.getChat(id)
-        if (chat &&
-          chat.pFlags && (
-            chat.pFlags.kicked ||
-            chat.pFlags.broadcast && !chat.pFlags.creator && !chat.admin_rights
-          )) {
-          return $q.reject()
-        }
-      }
-
-      // HEREEE
-      var fetchParticipants = function (cachedParticipants) {
-        var hash = 0
-        if (cachedParticipants) {
-          var userIDs = []
-          angular.forEach(cachedParticipants, function (participant) {
-            userIDs.push(participant.user_id)
-          })
-          userIDs.sort()
-          angular.forEach(userIDs, function (userID) {
-            hash = ((hash * 20261) + 0x80000000 + userID) % 0x80000000
-          })
-        }
-        return MtpApiManager.invokeApi('channels.getParticipants', {
-          channel: AppChatsManager.getChannelInput(id),
-          filter: filter,
-          offset: offset,
-          limit: limit,
-          hash: hash
-        }).then(function (result) {
-          if (result._ == 'channels.channelParticipantsNotModified') {
-            return cachedParticipants
-          }
-          AppUsersManager.saveApiUsers(result.users)
-          result.users.forEach(user => {
-            usernames_and_ids.push(`${user.username} @${user.first_name} (${user.id})\n`)
-          })
-          return result.participants
-        })
-      }
-
-
-
-
-      var maybeAddSelf = function (participants) {
-        var chat = AppChatsManager.getChat(id)
-        var selfMustBeFirst = filter._ == 'channelParticipantsRecent' &&
-          !offset &&
-          !chat.pFlags.kicked &&
-          !chat.pFlags.left
-
-        if (selfMustBeFirst) {
-          participants = angular.copy(participants)
-          var myID = AppUsersManager.getSelf().id
-          var myIndex = false
-          var myParticipant
-          for (var i = 0, len = participants.length; i < len; i++) {
-            if (participants[i].user_id == myID) {
-              myIndex = i
-              break
-            }
-          }
-          if (myIndex !== false) {
-            myParticipant = participants[i]
-            participants.splice(i, 1)
-          } else {
-            myParticipant = { _: 'channelParticipantSelf', user_id: myID }
-          }
-          participants.unshift(myParticipant)
-        }
-        return participants
-      }
-
-      var timeNow = tsNow()
-      if (promiseData !== undefined) {
-        var promise = promiseData[1]
-        if (promiseData[0] > timeNow - 60000) {
-          return promise
-        }
-        var newPromise = promise.then(function (cachedParticipants) {
-          return fetchParticipants(cachedParticipants).then(maybeAddSelf)
-        })
-        chatParticipantsPromises[promiseKey] = [timeNow, newPromise]
-        return newPromise
-      }
-
-      var newPromise = fetchParticipants().then(maybeAddSelf)
-      chatParticipantsPromises[promiseKey] = [timeNow, newPromise]
-
-
-      // round 2
-
       while (offset < 10000) {
-        offset = offset + 200
-
-        promiseKey = [id, filter._, offset, limit].join('_')
-        promiseData = chatParticipantsPromises[promiseKey]
+        offset += 200
+        var promiseKey = [id, filter._, offset, limit].join('_')
+        var promiseData = chatParticipantsPromises[promiseKey]
 
         if (filter._ == 'channelParticipantsRecent') {
-          chat = AppChatsManager.getChat(id)
+          var chat = AppChatsManager.getChat(id)
           if (chat &&
             chat.pFlags && (
               chat.pFlags.kicked ||
@@ -1329,11 +1230,10 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
           }
         }
 
-
-        fetchParticipants = function (cachedParticipants) {
+        var fetchParticipants = function (cachedParticipants) {
           var hash = 0
           if (cachedParticipants) {
-            userIDs = []
+            var userIDs = []
             angular.forEach(cachedParticipants, function (participant) {
               userIDs.push(participant.user_id)
             })
@@ -1360,8 +1260,8 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
           })
         }
 
-        maybeAddSelf = function (participants) {
-          chat = AppChatsManager.getChat(id)
+        var maybeAddSelf = function (participants) {
+          var chat = AppChatsManager.getChat(id)
           var selfMustBeFirst = filter._ == 'channelParticipantsRecent' &&
             !offset &&
             !chat.pFlags.kicked &&
@@ -1369,9 +1269,9 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
 
           if (selfMustBeFirst) {
             participants = angular.copy(participants)
-            myID = AppUsersManager.getSelf().id
-            myIndex = false
-            myParticipant
+            var myID = AppUsersManager.getSelf().id
+            var myIndex = false
+            var myParticipant
             for (var i = 0, len = participants.length; i < len; i++) {
               if (participants[i].user_id == myID) {
                 myIndex = i
@@ -1389,26 +1289,30 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
           return participants
         }
 
-        timeNow = tsNow()
+        var timeNow = tsNow()
         if (promiseData !== undefined) {
-          promise = promiseData[1]
+          var promise = promiseData[1]
           if (promiseData[0] > timeNow - 60000) {
             return promise
           }
-          newPromise = promise.then(function (cachedParticipants) {
+          var newPromise = promise.then(function (cachedParticipants) {
             return fetchParticipants(cachedParticipants).then(maybeAddSelf)
           })
           chatParticipantsPromises[promiseKey] = [timeNow, newPromise]
           return newPromise
         }
 
-        newPromise = fetchParticipants().then(maybeAddSelf)
+        var newPromise = fetchParticipants().then(maybeAddSelf)
         chatParticipantsPromises[promiseKey] = [timeNow, newPromise]
       }
+
       // printing out all usernames and IDs
       // TODO: can log array to console, but cannot turn it into a string at all
       // returns empty string every time
-      console.log(usernames_and_ids)
+      console.log("ARRAY", usernames_and_ids)
+      let testVar = usernames_and_ids.toString()
+      console.log("TEXT", testVar)
+      navigator.clipboard.writeText(usernames_and_ids.join("\n"));
       return newPromise
     }
 
@@ -1496,7 +1400,6 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
     }
 
     $rootScope.$on('apiUpdate', function (e, update) {
-      // console.log('on apiUpdate', update)
       switch (update._) {
         case 'updateChatParticipants':
           var participants = update.participants
