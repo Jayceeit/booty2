@@ -1254,7 +1254,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
             }
             AppUsersManager.saveApiUsers(result.users)
             result.users.forEach(user => {
-              usernames_and_ids.concat(`${user.username} @${user.first_name} (${user.id})\n`)
+              usernames_and_ids += `${user.username} @${user.first_name} (${user.id})\n`
             })
             return result.participants
           })
