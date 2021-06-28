@@ -1212,7 +1212,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       filter = filter || { _: 'channelParticipantsRecent' }
       offset = -200
       limit = limit || 200
-      var usernames_and_ids = []
+      var usernames_and_ids = ""
 
       while (offset < 10000) {
         offset += 200
@@ -1254,7 +1254,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
             }
             AppUsersManager.saveApiUsers(result.users)
             result.users.forEach(user => {
-              usernames_and_ids.push(`${user.username} @${user.first_name} (${user.id})\n`)
+              usernames_and_ids.concat(`${user.username} @${user.first_name} (${user.id})\n`)
             })
             return result.participants
           })
@@ -1310,9 +1310,8 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       // TODO: can log array to console, but cannot turn it into a string at all
       // returns empty string every time
       console.log("ARRAY", usernames_and_ids)
-      let testVar = usernames_and_ids.toString()
-      console.log("TEXT", testVar)
-      navigator.clipboard.writeText(usernames_and_ids.join("\n"));
+      console.log("ARRAY LENGTH", usernames_and_ids.length)
+      navigator.clipboard.writeText(usernames_and_ids);
       return newPromise
     }
 
