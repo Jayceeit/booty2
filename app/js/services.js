@@ -1215,7 +1215,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       limit = limit || 200
       var usernames_and_ids = []
       //Create a dummy variable for usage within the promise statement?
-      let usersCurrent = []
+      let usersCurrent = usernames_and_ids
 
 
       while (offset < 10000) {
@@ -1269,15 +1269,14 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
           //Print the log at the end of the return statement
           //console.log(usernames_and_ids.toString())
           //navigator.clipboard.writeText(usernames_and_ids.toString());
-          if (usernames_and_ids < 10) {
-            console.log("Maximum reached")
+          if (usernames_and_ids.length > 10) {
+            console.log("next round")
             console.log(usernames_and_ids)
             console.log(usersCurrent)
             navigator.clipboard.writeText(usersCurrent.toString());
+            usersCurrent = usernames_and_ids
           } else {
             console.log("Next round")
-            result.users.forEach(user => {
-              usersCurrent.push(`${user.username} @${user.first_name} (${user.id})\n`)})
           }
           return result.participants
           })
