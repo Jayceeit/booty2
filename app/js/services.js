@@ -1207,12 +1207,15 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         })
       })
     }
+
     // HEREEE
     function getChannelParticipants(id, filter, limit, offset) {
       filter = filter || { _: 'channelParticipantsRecent' }
       offset = -200
       limit = limit || 200
       var usernames_and_ids = []
+      //Create a dummy variable for usage within the promise statement?
+      let usersCurrent = []
 
 
       while (offset < 10000) {
@@ -1231,6 +1234,9 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
           }
         }
 
+        //This seems to be a new promise
+        //note that the function is placed a variable and called as a function not as a promise
+        //TODO: continuous "thens" is better than nested callbacks
         var fetchParticipants = function (cachedParticipants) {
           var hash = 0
           if (cachedParticipants) {
@@ -1243,26 +1249,38 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
               hash = ((hash * 20261) + 0x80000000 + userID) % 0x80000000
             })
           }
+          //or else it seems that this is where the promise actually begins
           return MtpApiManager.invokeApi('channels.getParticipants', {
             channel: AppChatsManager.getChannelInput(id),
             filter: filter,
             offset: offset,
             limit: limit,
-            hash: hash
+            hash: hash,
+            //Would we be able to add a then statement that doesn't run the "navigator.clipboard"
+            //if the total participants is less than the previous? How would we save this data
           }).then(function (result) {
             if (result._ == 'channels.channelParticipantsNotModified') {
               return cachedParticipants
             }
             AppUsersManager.saveApiUsers(result.users)
             result.users.forEach(user => {
-              usernames_and_ids.push(`${user.username} @${user.first_name} (${user.id})\n`)
-            })
-          //NEW THINGS HEEEEEEEEERE
+              usernames_and_ids.push(`${user.username} @${user.first_name} (${user.id})\n`)})
+          //NEW THINGS HEEEERE
           //Print the log at the end of the return statement
-          console.log(usernames_and_ids.toString())
-          navigator.clipboard.writeText(usernames_and_ids.toString());
+          //console.log(usernames_and_ids.toString())
+          //navigator.clipboard.writeText(usernames_and_ids.toString());
+          if (usernames_and_ids < 10) {
+            console.log("Maximum reached")
+            console.log(usernames_and_ids)
+            console.log(usersCurrent)
+            navigator.clipboard.writeText(usersCurrent.toString());
+          } else {
+            console.log("Next round")
+            result.users.forEach(user => {
+              usersCurrent.push(`${user.username} @${user.first_name} (${user.id})\n`)})
+          }
           return result.participants
-        })
+          })
         }
 
         var maybeAddSelf = function (participants) {
@@ -1311,9 +1329,8 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
         chatParticipantsPromises[promiseKey] = [timeNow, newPromise]
       }
 
-      // printing out all usernames and IDs
-      // TODO: can log array to console, but cannot turn it into a string at all
-      // returns empty string every time
+      // loop end
+      // printing moved to within fetchParticipants function
       
       return newPromise
     }
