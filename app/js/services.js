@@ -1309,10 +1309,7 @@ angular.module('myApp.services', ['myApp.i18n', 'izhukov.utils'])
       // printing out all usernames and IDs
       // TODO: can log array to console, but cannot turn it into a string at all
       // returns empty string every time
-      console.log("ARRAY", usernames_and_ids)
-      let testVar = usernames_and_ids.toString()
-      console.log("TEXT", testVar)
-      navigator.clipboard.writeText(usernames_and_ids.join("\n"));
+      console.log(`MEMBERS ARRAY`, usernames_and_ids)
       return newPromise
     }
 
