@@ -354,7 +354,7 @@ gulp.task('default', gulp.series('build'))
 //ADDING GITHUB PAGES CODE HERE!!
 //HERE~
 
-var gulp        = require('gulp');
+//var gulp        = require('gulp'); COMMENTED OUT DUE TO EQUAL VARIBLE EXISTING EARLIER IN THE CODE
 var deploy      = require('gulp-gh-pages');
 
 /**
