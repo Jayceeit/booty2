@@ -8,6 +8,14 @@ var del = require('del')
 var swPrecache = require('sw-precache')
 var Server = require('karma').Server
 
+//Adding github pages code snippet here
+var ghPages = require('gulp-gh-pages');
+ 
+gulp.task('deploy', function() {
+  return gulp.src('./dist/**/*')
+    .pipe(ghPages());
+});
+
 // The generated file is being created at src
 // so it can be fetched by usemin.
 gulp.task('templates', function () {
