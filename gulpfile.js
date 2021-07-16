@@ -1,5 +1,5 @@
 var packageJson = require('./package.json')
-var gulp = require('gulp')
+const {src, task}= require('gulp');
 var $ = require('gulp-load-plugins')({ lazy: false })
 var path = require('path')
 var http = require('http')
@@ -9,7 +9,7 @@ var swPrecache = require('sw-precache')
 var Server = require('karma').Server
 
 //Adding github pages code snippet here
-var ghPages = require('gulp-gh-pages');
+const ghPages = require('gulp-gh-pages');
  
 gulp.task('deploy', function() {
   return gulp.src('./dist/**/*')
