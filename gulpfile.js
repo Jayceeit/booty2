@@ -8,6 +8,10 @@ var del = require('del')
 var swPrecache = require('sw-precache')
 var Server = require('karma').Server
 
+// Added for GH-Pages
+const {src, task}= require('gulp')
+const ghPages = require('gulp-gh-pages')
+
 // The generated file is being created at src
 // so it can be fetched by usemin.
 gulp.task('templates', function () {
@@ -350,3 +354,6 @@ gulp.task('package', gulp.series('cleanup-dist'))
 gulp.task('publish', gulp.series('add-appcache-manifest', 'generate-service-worker'))
 
 gulp.task('default', gulp.series('build'))
+
+// Adding gh pages
+task('deploy', () => src('./dist/**/*').pipe(ghPages()))
