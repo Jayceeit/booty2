@@ -225,6 +225,7 @@ function writeServiceWorkerFile (rootDir, handleFetch, callback) {
   var config = {
     cacheId: packageJson.name,
     handleFetch: handleFetch,
+    logger: $.util.log,
     staticFileGlobs: fileGlobs,
     stripPrefix: './' + rootDir + '/',
     importScripts: ['js/lib/push_worker.js'],
@@ -235,13 +236,13 @@ function writeServiceWorkerFile (rootDir, handleFetch, callback) {
   swPrecache.write(path.join(rootDir, 'service_worker.js'), config, callback)
 }
 
-gulp.task('generate-service-worker', gulp.series('build', function (callback) {
+/*gulp.task('generate-service-worker', gulp.series('build', function (callback) {
   writeServiceWorkerFile('dist', true, callback)
-}))
+}))*/
 
 gulp.task('add-appcache-manifest', gulp.series('build', function () {
   return gulp.src(fileGlobs)
-    .pipe($.manifest3({
+    .pipe($.manifest({
       timestamp: false,
       hash: true,
       network: ['http://*', 'https://*', '*'],
@@ -249,7 +250,6 @@ gulp.task('add-appcache-manifest', gulp.series('build', function () {
       exclude: ['webogram.appcache', 'app.manifest']
     })
     )
-    .pipe(gulp.dest('./dist'))
 }))
 
 gulp.task('package-dev', gulp.parallel(
@@ -347,21 +347,13 @@ gulp.task('tdd', gulp.series('templates', 'karma-tdd'))
 
 gulp.task('package', gulp.series('cleanup-dist'))
 
-gulp.task('publish', gulp.series('add-appcache-manifest', 'generate-service-worker'))
-
-gulp.task('default', gulp.series('build'))
-
-//ADDING GITHUB PAGES CODE HERE!!
-//HERE~
-
-//var gulp        = require('gulp'); COMMENTED OUT DUE TO EQUAL VARIBLE EXISTING EARLIER IN THE CODE
-var deploy      = require('gulp-gh-pages');
-
-/**
- * Push build to gh-pages
- */
+gulp.task('publish', gulp.series('add-appcache-manifest', function (callback) {
+  writeServiceWorkerFile('dist', true, callback)
+}))
 
 gulp.task('deploy', function () {
-  return gulp.src("./dist/**/*")
-    .pipe(deploy())
-});
+  return gulp.src('./dist/**/*')
+    .pipe($.ghPages())
+})
+
+gulp.task('default', gulp.series('build'))
