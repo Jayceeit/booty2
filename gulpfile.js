@@ -7,6 +7,7 @@ var st = require('st')
 var del = require('del')
 var swPrecache = require('sw-precache')
 var Server = require('karma').Server
+var manifest = require('gulp-manifest3')
 
 // The generated file is being created at src
 // so it can be fetched by usemin.
@@ -221,7 +222,7 @@ var fileGlobs = [
   '!dist/css/badbrowser.css'
 ]
 
-function writeServiceWorkerFile (rootDir, handleFetch, callback) {
+function writeServiceWorkerFile(rootDir, handleFetch, callback) {
   var config = {
     cacheId: packageJson.name,
     handleFetch: handleFetch,
@@ -242,7 +243,7 @@ function writeServiceWorkerFile (rootDir, handleFetch, callback) {
 
 gulp.task('add-appcache-manifest', gulp.series('build', function () {
   return gulp.src(fileGlobs)
-    .pipe($.manifest({
+    .pipe(manifest({
       timestamp: false,
       hash: true,
       network: ['http://*', 'https://*', '*'],
@@ -250,6 +251,7 @@ gulp.task('add-appcache-manifest', gulp.series('build', function () {
       exclude: ['webogram.appcache', 'app.manifest']
     })
     )
+    .pipe(gulp.dest('./dist'))
 }))
 
 gulp.task('package-dev', gulp.parallel(
