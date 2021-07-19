@@ -1,6 +1,6 @@
-# ** BOOTY 2 BY JAYCEEIT **
+# **BOOTY 2 BY JAYCEEIT**
 
-# * A Webogram / Telegram App *
+# *A Webogram / Telegram App*
 
 ![Telegram](https://ichef.bbci.co.uk/news/976/cpsprodpb/2B41/production/_100837011_teelm.png)
 
