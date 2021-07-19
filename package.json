@@ -23,7 +23,7 @@
     "start": "gulp watch",
     "test": "gulp test",
     "build": "gulp publish",
-    "deploy" : "gulp deploy"
+    "deploy": "gulp deploy"
   },
   "repository": {
     "type": "git",
