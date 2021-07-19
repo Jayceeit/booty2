@@ -9,6 +9,11 @@ var swPrecache = require('sw-precache')
 var Server = require('karma').Server
 var manifest = require('gulp-manifest3')
 
+// Remove this to remove gh-pages additions
+var ghpages = require('gh-pages')
+
+ghpages.publish('dist', function(err) {})
+
 // The generated file is being created at src
 // so it can be fetched by usemin.
 gulp.task('templates', function () {
